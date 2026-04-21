@@ -1,4 +1,4 @@
-package pe.edu.pucp.tiendaalien.logistica;
+package pe.edu.pucp.tiendaalien.model.logistica;
 
 public enum ModalidadPago {
     PAGO_WEB,

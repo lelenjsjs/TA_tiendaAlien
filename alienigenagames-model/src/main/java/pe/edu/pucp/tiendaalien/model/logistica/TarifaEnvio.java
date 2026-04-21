@@ -1,6 +1,6 @@
-package pe.edu.pucp.tiendaalien.logistica;
+package pe.edu.pucp.tiendaalien.model.logistica;
 
-import pe.edu.pucp.tiendaalien.usuarios.Ubigeo;
+import pe.edu.pucp.tiendaalien.model.usuarios.Ubigeo;
 
 public class TarifaEnvio {
 

@@ -1,4 +1,4 @@
-package pe.edu.pucp.tiendaalien.usuarios;
+package pe.edu.pucp.tiendaalien.model.usuarios;
 
 import java.util.Date;
 import java.util.List;
