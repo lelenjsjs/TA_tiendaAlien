@@ -1,5 +1,4 @@
 package pe.edu.pucp.tiendaalien.usuarios;
-import pe.edu.pucp.tiendaalien.logistica.Ubigeo;
 
 public class DireccionUsuario {
 
