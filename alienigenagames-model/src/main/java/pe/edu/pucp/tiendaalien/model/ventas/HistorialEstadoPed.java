@@ -1,4 +1,4 @@
-package pe.edu.pucp.tiendaalien.ventas;
+package pe.edu.pucp.tiendaalien.model.ventas;
 import java.util.Date;
 
 public class HistorialEstadoPed {

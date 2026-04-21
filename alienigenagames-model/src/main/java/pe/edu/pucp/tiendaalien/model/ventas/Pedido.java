@@ -1,4 +1,8 @@
-package pe.edu.pucp.tiendaalien.ventas;
+package pe.edu.pucp.tiendaalien.model.ventas;
+import pe.edu.pucp.tiendaalien.model.usuarios.Usuario;
+import pe.edu.pucp.tiendaalien.model.usuarios.Ubigeo;
+import pe.edu.pucp.tiendaalien.model.logistica.PedLogistica;
+import pe.edu.pucp.tiendaalien.model.facturacion.ComprobantePago;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;

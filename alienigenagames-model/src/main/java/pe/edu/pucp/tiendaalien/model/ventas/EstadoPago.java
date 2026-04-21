@@ -1,4 +1,4 @@
-package pe.edu.pucp.tiendaalien.ventas;
+package pe.edu.pucp.tiendaalien.model.ventas;
 public enum EstadoPago {
     PENDIENTE,
     PAGADO,
