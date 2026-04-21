@@ -1,4 +1,4 @@
-package pe.edu.pucp.tiendaalien.logistica;
+package pe.edu.pucp.tiendaalien.usuarios;
 
 public class Ubigeo {
     private int ubigeoId;

@@ -1,5 +1,7 @@
 package pe.edu.pucp.tiendaalien.logistica;
 
+import pe.edu.pucp.tiendaalien.usuarios.Ubigeo;
+
 public class TarifaEnvio {
 
     private int tarifaId;
