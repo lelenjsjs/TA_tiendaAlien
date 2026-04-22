@@ -13,7 +13,7 @@ public class MarcaDAOImpl implements MarcaDAO {
     @Override
     public List<Marca> listAll() {
         List<Marca> lista = new ArrayList<>();
-        String sql = "SELECT marca_id, nombre FROM marcas";
+        String sql = "SELECT marca_id, nombre FROM marca";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
@@ -30,7 +30,7 @@ public class MarcaDAOImpl implements MarcaDAO {
 
     @Override
     public Marca load(Integer id) {
-        String sql = "SELECT marca_id, nombre FROM marcas WHERE marca_id = ?";
+        String sql = "SELECT marca_id, nombre FROM marca WHERE marca_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -49,7 +49,7 @@ public class MarcaDAOImpl implements MarcaDAO {
 
     @Override
     public Marca save(Marca m) {
-        String sql = "INSERT INTO marcas (nombre) VALUES (?)";
+        String sql = "INSERT INTO marca (nombre) VALUES (?)";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -72,7 +72,7 @@ public class MarcaDAOImpl implements MarcaDAO {
 
     @Override
     public Marca update(Marca m) {
-        String sql = "UPDATE marcas SET nombre = ? WHERE marca_id = ?";
+        String sql = "UPDATE marca SET nombre = ? WHERE marca_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -89,7 +89,7 @@ public class MarcaDAOImpl implements MarcaDAO {
 
     @Override
     public void remove(Marca m) {
-        String sql = "DELETE FROM marcas WHERE marca_id = ?";
+        String sql = "DELETE FROM marca WHERE marca_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
