@@ -3,7 +3,7 @@ package pe.edu.pucp.tiendaalien.model.catalogo;
 public class ImagenProducto {
     private String urlImagen;
     private boolean siPrincipal;
-
+    private Producto producto_id;
     //setters y getters
     public String UrlImagen() {
         return urlImagen;

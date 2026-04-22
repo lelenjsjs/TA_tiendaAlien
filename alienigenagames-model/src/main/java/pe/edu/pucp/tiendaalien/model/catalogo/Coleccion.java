@@ -16,6 +16,12 @@ public class Coleccion {
     }
 
     //setters y getters
+    public Franquicia getFranquicia() {
+        return franquicia;
+    }
+    public void setFranquicia(Franquicia franquicia) {
+        this.franquicia=franquicia;
+    }
 
     public int getColeccionId() {
         return coleccionId;
