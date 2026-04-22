@@ -13,6 +13,12 @@ import pe.edu.pucp.tiendaalien.dao.AgenciaEnvioDAO;
 import pe.edu.pucp.tiendaalien.dao.impl.AgenciaEnvioDAOImpl;
 import pe.edu.pucp.tiendaalien.model.logistica.AgenciaEnvio;
 
+import pe.edu.pucp.tiendaalien.dao.UsuarioDAO;
+import pe.edu.pucp.tiendaalien.dao.impl.UsuarioDAOImpl;
+import pe.edu.pucp.tiendaalien.model.usuarios.Usuario;
+import pe.edu.pucp.tiendaalien.model.usuarios.Rol;
+
+
 import java.util.List;
 
 
@@ -90,6 +96,48 @@ public class Main {
 //        ageDAO2.remove(ageABorrar);
 //
 //        System.out.println("5. ELIMINAR: Agencia eliminada correctamente de la base de datos.");
+
+        // ===============================================================================
+
+//        // PRUEBA 3: USUARIO
+//        System.out.println("\n>> [TEST USUARIO]");
+//        UsuarioDAO userDAO = new UsuarioDAOImpl();
+//
+//        // A. INSERTAR (save)
+//        Usuario nuevoUser = new Usuario();
+//        nuevoUser.setNombres("Jennie");
+//        nuevoUser.setApellidos("Kim");
+//        nuevoUser.setEmail("jennie_kim@pucp.edu.pe");
+//        nuevoUser.setContraHash("hash_seguro_123");
+//        nuevoUser.setCelular("987654321");
+//        nuevoUser.setRol(Rol.CLIENTE);
+//        nuevoUser.setFechaCreacion(new java.util.Date());
+//
+//        userDAO.save(nuevoUser);
+//        System.out.println("1. INSERTAR: Usuario creado con ID: " + nuevoUser.getUsuarioId());
+//
+//        // B. OBTENER POR ID (load)
+//        Usuario userCargado = userDAO.load(nuevoUser.getUsuarioId());
+//        System.out.println("2. OBTENER POR ID: Cargado: " + userCargado.getNombres() + " " + userCargado.getApellidos());
+//
+//
+//        // C. MODIFICAR (update)
+//        userCargado.setApellidos("Perez (Editado)");
+//        userDAO.update(userCargado);
+//        System.out.println("3. MODIFICAR: Apellido actualizado a: " + userDAO.load(nuevoUser.getUsuarioId()).getApellidos());
+//
+//
+//        // D. LISTAR (listAll)
+//        List<Usuario> listaUsers = userDAO.listAll();
+//        System.out.println("4. LISTAR: Total de usuarios en el sistema: " + listaUsers.size());
+
+        // E. ELIMINAR
+//        UsuarioDAO daoU = new UsuarioDAOImpl();
+//        Usuario userAEliminar = new Usuario();
+//        userAEliminar.setUsuarioId(1);
+//        daoU.remove(userAEliminar);
+//
+//        System.out.println("5. ELIMINAR: Usuario eliminado correctamente.");
 
     }
 }
