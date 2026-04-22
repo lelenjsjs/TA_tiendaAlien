@@ -142,56 +142,49 @@ public class PedLogisticaRecojoDAOImpl implements PedLogisticaRecojoDAO {
         }
     }
 
-    // =========================================================================
-    // MÉTODOS DE NEGOCIO CON CALLABLE STATEMENT (PROCEDIMIENTOS ALMACENADOS)
-    // =========================================================================
+//    @Override
+//    public List<PedLogisticaRecojo> listarPorEstado(EstadoLogistica estado) {
+//        List<PedLogisticaRecojo> list = new ArrayList<>();
+//        String sql = "{CALL SP_ListarRecojosPorEstado(?)}";
+//
+//        try(Connection connection = DBManager.getInstance().getConnection();
+//            CallableStatement cstmt = connection.prepareCall(sql)) {
+//
+//            cstmt.setString(1, estado.name());
+//
+//            try(ResultSet rs = cstmt.executeQuery()) {
+//                while (rs.next()) {
+//                    list.add(mapearObjeto(rs));
+//                }
+//            }
+//            return list;
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+//
+//    @Override
+//    public List<PedLogisticaRecojo> listarPorVencer(Date fechaActual) {
+//        List<PedLogisticaRecojo> list = new ArrayList<>();
+//        String sql = "{CALL SP_ListarRecojosPorVencer(?)}";
+//
+//        try(Connection connection = DBManager.getInstance().getConnection();
+//            CallableStatement cstmt = connection.prepareCall(sql)) {
+//
+//            // Pasamos la fecha como java.sql.Date
+//            cstmt.setDate(1, new java.sql.Date(fechaActual.getTime()));
+//
+//            try(ResultSet rs = cstmt.executeQuery()) {
+//                while (rs.next()) {
+//                    list.add(mapearObjeto(rs));
+//                }
+//            }
+//            return list;
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
-    @Override
-    public List<PedLogisticaRecojo> listarPorEstado(EstadoLogistica estado) {
-        List<PedLogisticaRecojo> list = new ArrayList<>();
-        String sql = "{CALL SP_ListarRecojosPorEstado(?)}";
-
-        try(Connection connection = DBManager.getInstance().getConnection();
-            CallableStatement cstmt = connection.prepareCall(sql)) {
-
-            cstmt.setString(1, estado.name());
-
-            try(ResultSet rs = cstmt.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapearObjeto(rs));
-                }
-            }
-            return list;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public List<PedLogisticaRecojo> listarPorVencer(Date fechaActual) {
-        List<PedLogisticaRecojo> list = new ArrayList<>();
-        String sql = "{CALL SP_ListarRecojosPorVencer(?)}";
-
-        try(Connection connection = DBManager.getInstance().getConnection();
-            CallableStatement cstmt = connection.prepareCall(sql)) {
-
-            // Pasamos la fecha como java.sql.Date
-            cstmt.setDate(1, new java.sql.Date(fechaActual.getTime()));
-
-            try(ResultSet rs = cstmt.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapearObjeto(rs));
-                }
-            }
-            return list;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    // =========================================================================
-    // MÉTODO AUXILIAR PARA EL MAPEO
-    // =========================================================================
     private PedLogisticaRecojo mapearObjeto(ResultSet rs) throws SQLException {
         PedLogisticaRecojo recojo = new PedLogisticaRecojo();
 

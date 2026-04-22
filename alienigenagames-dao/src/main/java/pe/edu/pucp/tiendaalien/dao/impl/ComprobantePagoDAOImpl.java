@@ -153,74 +153,67 @@ public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
         }
     }
 
-    // =========================================================================
-    // MÉTODOS DE NEGOCIO CON CALLABLE STATEMENT
-    // =========================================================================
+//    @Override
+//    public ComprobantePago buscarPorPedido(int pedidoId) {
+//        String sql = "{CALL SP_BuscarComprobantePorPedido(?)}";
+//        try(Connection connection = DBManager.getInstance().getConnection();
+//            CallableStatement cstmt = connection.prepareCall(sql)) {
+//
+//            cstmt.setInt(1, pedidoId);
+//            try(ResultSet rs = cstmt.executeQuery()) {
+//                if (rs.next()) {
+//                    return mapearObjeto(rs);
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return null;
+//    }
+//
+//    @Override
+//    public List<ComprobantePago> listarPorFechas(Date fechaInicio, Date fechaFin) {
+//        List<ComprobantePago> list = new ArrayList<>();
+//        String sql = "{CALL SP_ListarComprobantesPorFechas(?, ?)}";
+//
+//        try(Connection connection = DBManager.getInstance().getConnection();
+//            CallableStatement cstmt = connection.prepareCall(sql)) {
+//
+//            cstmt.setDate(1, new java.sql.Date(fechaInicio.getTime()));
+//            cstmt.setDate(2, new java.sql.Date(fechaFin.getTime()));
+//
+//            try(ResultSet rs = cstmt.executeQuery()) {
+//                while (rs.next()) {
+//                    list.add(mapearObjeto(rs));
+//                }
+//            }
+//            return list;
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+//
+//    @Override
+//    public List<ComprobantePago> listarPorEstadoSunat(EstadoSunat estado) {
+//        List<ComprobantePago> list = new ArrayList<>();
+//        String sql = "{CALL SP_ListarComprobantesPorEstado(?)}";
+//
+//        try(Connection connection = DBManager.getInstance().getConnection();
+//            CallableStatement cstmt = connection.prepareCall(sql)) {
+//
+//            cstmt.setString(1, estado.name());
+//
+//            try(ResultSet rs = cstmt.executeQuery()) {
+//                while (rs.next()) {
+//                    list.add(mapearObjeto(rs));
+//                }
+//            }
+//            return list;
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
-    @Override
-    public ComprobantePago buscarPorPedido(int pedidoId) {
-        String sql = "{CALL SP_BuscarComprobantePorPedido(?)}";
-        try(Connection connection = DBManager.getInstance().getConnection();
-            CallableStatement cstmt = connection.prepareCall(sql)) {
-
-            cstmt.setInt(1, pedidoId);
-            try(ResultSet rs = cstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapearObjeto(rs);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-
-    @Override
-    public List<ComprobantePago> listarPorFechas(Date fechaInicio, Date fechaFin) {
-        List<ComprobantePago> list = new ArrayList<>();
-        String sql = "{CALL SP_ListarComprobantesPorFechas(?, ?)}";
-
-        try(Connection connection = DBManager.getInstance().getConnection();
-            CallableStatement cstmt = connection.prepareCall(sql)) {
-
-            cstmt.setDate(1, new java.sql.Date(fechaInicio.getTime()));
-            cstmt.setDate(2, new java.sql.Date(fechaFin.getTime()));
-
-            try(ResultSet rs = cstmt.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapearObjeto(rs));
-                }
-            }
-            return list;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public List<ComprobantePago> listarPorEstadoSunat(EstadoSunat estado) {
-        List<ComprobantePago> list = new ArrayList<>();
-        String sql = "{CALL SP_ListarComprobantesPorEstado(?)}";
-
-        try(Connection connection = DBManager.getInstance().getConnection();
-            CallableStatement cstmt = connection.prepareCall(sql)) {
-
-            cstmt.setString(1, estado.name());
-
-            try(ResultSet rs = cstmt.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapearObjeto(rs));
-                }
-            }
-            return list;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    // =========================================================================
-    // MÉTODO AUXILIAR
-    // =========================================================================
     private ComprobantePago mapearObjeto(ResultSet rs) throws SQLException {
         ComprobantePago comp = new ComprobantePago();
 

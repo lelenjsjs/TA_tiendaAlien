@@ -198,91 +198,91 @@ public class PedLogisticaEnvioDAOImpl implements PedLogisticaEnvioDAO {
         return envio;
     }
 
-    @Override
-    public PedLogisticaEnvio buscarPorTracking(String codTracking) {
-        // La sintaxis de CallableStatement usa llaves {} y la palabra CALL
-        String sql = "{CALL SP_BuscarEnvioPorTracking(?)}";
+//    @Override
+//    public PedLogisticaEnvio buscarPorTracking(String codTracking) {
+//        // La sintaxis de CallableStatement usa llaves {} y la palabra CALL
+//        String sql = "{CALL SP_BuscarEnvioPorTracking(?)}";
+//
+//        try(Connection connection = DBManager.getInstance().getConnection();
+//            CallableStatement cstmt = connection.prepareCall(sql)) {
+//
+//            cstmt.setString(1, codTracking);
+//
+//            try(ResultSet rs = cstmt.executeQuery()) {
+//                if (rs.next()) {
+//                    return mapearObjeto(rs);
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return null; // Si no encuentra el tracking, devuelve null
+//    }
 
-        try(Connection connection = DBManager.getInstance().getConnection();
-            CallableStatement cstmt = connection.prepareCall(sql)) {
+//    @Override
+//    public List<PedLogisticaEnvio> listarPorModalidadPago(ModalidadPago modalidad) {
+//        List<PedLogisticaEnvio> list = new ArrayList<>();
+//        String sql = "{CALL SP_ListarEnviosPorModalidad(?)}";
+//
+//        try(Connection connection = DBManager.getInstance().getConnection();
+//            CallableStatement cstmt = connection.prepareCall(sql)) {
+//
+//            // Convertimos el Enum a String para mandarlo a la base de datos
+//            cstmt.setString(1, modalidad.name());
+//
+//            try(ResultSet rs = cstmt.executeQuery()) {
+//                while (rs.next()) {
+//                    list.add(mapearObjeto(rs));
+//                }
+//            }
+//            return list;
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
-            cstmt.setString(1, codTracking);
+//    @Override
+//    public List<PedLogisticaEnvio> listarPorAgencia(int agenciaId) {
+//        List<PedLogisticaEnvio> list = new ArrayList<>();
+//        // Llamamos al Stored Procedure de la base de datos
+//        String sql = "{CALL SP_ListarEnviosPorAgencia(?)}";
+//
+//        try(Connection connection = DBManager.getInstance().getConnection();
+//            CallableStatement cstmt = connection.prepareCall(sql)) {
+//
+//            cstmt.setInt(1, agenciaId);
+//
+//            try(ResultSet rs = cstmt.executeQuery()) {
+//                while (rs.next()) {
+//                    list.add(mapearObjeto(rs));
+//                }
+//            }
+//            return list;
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
-            try(ResultSet rs = cstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapearObjeto(rs);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return null; // Si no encuentra el tracking, devuelve null
-    }
-
-    @Override
-    public List<PedLogisticaEnvio> listarPorModalidadPago(ModalidadPago modalidad) {
-        List<PedLogisticaEnvio> list = new ArrayList<>();
-        String sql = "{CALL SP_ListarEnviosPorModalidad(?)}";
-
-        try(Connection connection = DBManager.getInstance().getConnection();
-            CallableStatement cstmt = connection.prepareCall(sql)) {
-
-            // Convertimos el Enum a String para mandarlo a la base de datos
-            cstmt.setString(1, modalidad.name());
-
-            try(ResultSet rs = cstmt.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapearObjeto(rs));
-                }
-            }
-            return list;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public List<PedLogisticaEnvio> listarPorAgencia(int agenciaId) {
-        List<PedLogisticaEnvio> list = new ArrayList<>();
-        // Llamamos al Stored Procedure de la base de datos
-        String sql = "{CALL SP_ListarEnviosPorAgencia(?)}";
-
-        try(Connection connection = DBManager.getInstance().getConnection();
-            CallableStatement cstmt = connection.prepareCall(sql)) {
-
-            cstmt.setInt(1, agenciaId);
-
-            try(ResultSet rs = cstmt.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapearObjeto(rs));
-                }
-            }
-            return list;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public List<PedLogisticaEnvio> listarPorEstado(EstadoLogistica estado) {
-        List<PedLogisticaEnvio> list = new ArrayList<>();
-        // Llamamos al Stored Procedure de la base de datos
-        String sql = "{CALL SP_ListarEnviosPorEstado(?)}";
-
-        try(Connection connection = DBManager.getInstance().getConnection();
-            CallableStatement cstmt = connection.prepareCall(sql)) {
-
-            // Pasamos el Enum como String
-            cstmt.setString(1, estado.name());
-
-            try(ResultSet rs = cstmt.executeQuery()) {
-                while (rs.next()) {
-                    list.add(mapearObjeto(rs));
-                }
-            }
-            return list;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    @Override
+//    public List<PedLogisticaEnvio> listarPorEstado(EstadoLogistica estado) {
+//        List<PedLogisticaEnvio> list = new ArrayList<>();
+//        // Llamamos al Stored Procedure de la base de datos
+//        String sql = "{CALL SP_ListarEnviosPorEstado(?)}";
+//
+//        try(Connection connection = DBManager.getInstance().getConnection();
+//            CallableStatement cstmt = connection.prepareCall(sql)) {
+//
+//            // Pasamos el Enum como String
+//            cstmt.setString(1, estado.name());
+//
+//            try(ResultSet rs = cstmt.executeQuery()) {
+//                while (rs.next()) {
+//                    list.add(mapearObjeto(rs));
+//                }
+//            }
+//            return list;
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

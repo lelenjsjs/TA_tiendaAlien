@@ -13,7 +13,7 @@ public interface ComprobantePagoDAO extends BaseDAO<ComprobantePago, Integer> {
     List<ComprobantePago> listAll();
 
     // Métodos de Negocio (Stored Procedures)
-    ComprobantePago buscarPorPedido(int pedidoId);
-    List<ComprobantePago> listarPorFechas(Date fechaInicio, Date fechaFin);
-    List<ComprobantePago> listarPorEstadoSunat(EstadoSunat estado);
+//    ComprobantePago buscarPorPedido(int pedidoId);
+//    List<ComprobantePago> listarPorFechas(Date fechaInicio, Date fechaFin);
+//    List<ComprobantePago> listarPorEstadoSunat(EstadoSunat estado);
 }

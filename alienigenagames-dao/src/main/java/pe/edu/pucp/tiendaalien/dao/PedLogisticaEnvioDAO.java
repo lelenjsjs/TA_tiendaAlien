@@ -10,12 +10,12 @@ import java.util.List;
 public interface PedLogisticaEnvioDAO extends BaseDAO<PedLogisticaEnvio, Integer> {
     List<PedLogisticaEnvio> listAll();
 
-    PedLogisticaEnvio buscarPorTracking(String codTracking);
-
-    List<PedLogisticaEnvio> listarPorModalidadPago(ModalidadPago modalidad);
-
-    List<PedLogisticaEnvio> listarPorAgencia(int agenciaId);
-
-    List<PedLogisticaEnvio> listarPorEstado(EstadoLogistica estado);
+//    PedLogisticaEnvio buscarPorTracking(String codTracking);
+//
+//    List<PedLogisticaEnvio> listarPorModalidadPago(ModalidadPago modalidad);
+//
+//    List<PedLogisticaEnvio> listarPorAgencia(int agenciaId);
+//
+//    List<PedLogisticaEnvio> listarPorEstado(EstadoLogistica estado);
 
 }

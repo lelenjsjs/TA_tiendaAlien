@@ -11,7 +11,7 @@ public interface PedLogisticaRecojoDAO extends BaseDAO<PedLogisticaRecojo, Integ
 
     List<PedLogisticaRecojo> listAll();
 
-    List<PedLogisticaRecojo> listarPorEstado(EstadoLogistica estado);
-
-    List<PedLogisticaRecojo> listarPorVencer(Date fechaActual);
+//    List<PedLogisticaRecojo> listarPorEstado(EstadoLogistica estado);
+//
+//    List<PedLogisticaRecojo> listarPorVencer(Date fechaActual);
 }
