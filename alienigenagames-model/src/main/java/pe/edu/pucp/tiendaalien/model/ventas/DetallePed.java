@@ -1,5 +1,7 @@
 package pe.edu.pucp.tiendaalien.model.ventas;
 
+import pe.edu.pucp.tiendaalien.model.catalogo.Producto;
+
 public class DetallePed {
 
     private Integer detallePedId;
