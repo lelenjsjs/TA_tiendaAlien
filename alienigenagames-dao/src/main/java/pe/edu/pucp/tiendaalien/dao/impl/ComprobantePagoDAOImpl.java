@@ -10,7 +10,7 @@ import pe.edu.pucp.tiendaalien.model.ventas.Pedido;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
+//import java.util.Date;
 import java.util.List;
 
 public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
@@ -35,7 +35,7 @@ public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
 
     @Override
     public ComprobantePago load(Integer id) {
-        String sql = "SELECT * FROM comprobante_pago WHERE id_comprobante = ?";
+        String sql = "SELECT * FROM comprobante_pago WHERE comprobante_id = ?";
         try(Connection connection = DBManager.getInstance().getConnection();
             PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
@@ -54,7 +54,7 @@ public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
     @Override
     public ComprobantePago save(ComprobantePago comp) {
         String sql = "INSERT INTO comprobante_pago (nro_serie, correlativo, cliente_nro_doc, cliente_denominacion, direccion_fiscal, " +
-                "monto_total, monto_igv, monto_gravado, estado_sunat, url_xml, url_pdf, fec_emision, fid_pedido, fid_tipo_comprobante, fid_tipo_doc_identidad) " +
+                "monto_total, monto_igv, monto_gravado, estado_sunat, url_xml, url_pdf, fec_emision, pedido_id, tipo_comprobante_id, tipo_doc_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try(Connection connection = DBManager.getInstance().getConnection();
@@ -99,8 +99,8 @@ public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
     @Override
     public ComprobantePago update(ComprobantePago comp) {
         String sql = "UPDATE comprobante_pago SET nro_serie=?, correlativo=?, cliente_nro_doc=?, cliente_denominacion=?, direccion_fiscal=?, " +
-                "monto_total=?, monto_igv=?, monto_gravado=?, estado_sunat=?, url_xml=?, url_pdf=?, fec_emision=?, fid_pedido=?, fid_tipo_comprobante=?, fid_tipo_doc_identidad=? " +
-                "WHERE id_comprobante=?";
+                "monto_total=?, monto_igv=?, monto_gravado=?, estado_sunat=?, url_xml=?, url_pdf=?, fec_emision=?, pedido_id=?, tipo_comprobante_id=?, tipo_doc_id=? " +
+                "WHERE comprobante_id=?";
 
         try(Connection connection = DBManager.getInstance().getConnection();
             PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -141,7 +141,7 @@ public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
     public void remove(ComprobantePago comp) {
         // En un sistema contable real NUNCA se borran los comprobantes, se ANULAN
         comp.setEstado_sunat(EstadoSunat.ANULADO);
-        String sql = "UPDATE comprobante_pago SET estado_sunat = ? WHERE id_comprobante = ?";
+        String sql = "UPDATE comprobante_pago SET estado_sunat = ? WHERE comprobante_id = ?";
         try(Connection connection = DBManager.getInstance().getConnection();
             PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
@@ -217,7 +217,7 @@ public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
     private ComprobantePago mapearObjeto(ResultSet rs) throws SQLException {
         ComprobantePago comp = new ComprobantePago();
 
-        comp.setComprobante_id(rs.getInt("id_comprobante"));
+        comp.setComprobante_id(rs.getInt("comprobante_id"));
         comp.setNro_serie(rs.getString("nro_serie"));
         comp.setCorrelativo(rs.getString("correlativo"));
         comp.setCliente_nro_doc(rs.getString("cliente_nro_doc"));
@@ -235,7 +235,7 @@ public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
         comp.setFec_emision(rs.getDate("fec_emision"));
 
         // Mapear relación: Pedido
-        int idPedido = rs.getInt("fid_pedido");
+        int idPedido = rs.getInt("pedido_id");
         if (!rs.wasNull()) {
             Pedido pedido = new Pedido();
             pedido.setPedidoId(idPedido); // Asegúrate de que el método en tu clase se llame getPedidoId/setPedidoId
@@ -243,7 +243,7 @@ public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
         }
 
         // Mapear relación: TipoComprobante (Como ya es una CLASE, creamos el objeto)
-        int idTipoComp = rs.getInt("fid_tipo_comprobante");
+        int idTipoComp = rs.getInt("tipo_comprobante_id");
         if (!rs.wasNull()) {
             TipoComprobante tipoComp = new TipoComprobante();
             tipoComp.setTipo_comprobante_id(idTipoComp);
@@ -251,7 +251,7 @@ public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
         }
 
         // Mapear relación: TipoDocIdentidad (Como ya es una CLASE, creamos el objeto)
-        int idTipoDoc = rs.getInt("fid_tipo_doc_identidad");
+        int idTipoDoc = rs.getInt("tipo_doc_id");
         if (!rs.wasNull()) {
             TipoDocIdentidad tipoDoc = new TipoDocIdentidad();
             tipoDoc.setTipoDocId(idTipoDoc);

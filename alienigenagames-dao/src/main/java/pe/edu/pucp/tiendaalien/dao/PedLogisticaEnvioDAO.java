@@ -2,8 +2,8 @@ package pe.edu.pucp.tiendaalien.dao;
 
 import pe.edu.pucp.tiendaalien.dao.base.BaseDAO;
 import pe.edu.pucp.tiendaalien.model.logistica.PedLogisticaEnvio;
-import pe.edu.pucp.tiendaalien.model.logistica.ModalidadPago;
-import pe.edu.pucp.tiendaalien.model.logistica.EstadoLogistica;
+//import pe.edu.pucp.tiendaalien.model.logistica.ModalidadPago;
+//import pe.edu.pucp.tiendaalien.model.logistica.EstadoLogistica;
 
 import java.util.List;
 
