@@ -15,10 +15,10 @@ public class PedLogisticaRecojoDAOImpl implements PedLogisticaRecojoDAO {
     @Override
     public List<PedLogisticaRecojo> listAll() {
         List<PedLogisticaRecojo> list = new ArrayList<>();
-        String sql = "SELECT p.ped_logistica_id, p.estado_logistico, p.receptor_nombre, p.receptor_tipo_doc, p.receptor_nro_doc, p.receptor_cel, " +
+        String sql = "SELECT p.id_ped_logistica, p.estado_logistica, p.receptor_nombre, p.receptor_tipo_doc, p.receptor_nro_doc, p.receptor_cel, " +
                 "r.fec_lim_recojo, r.fec_recojo_real " +
                 "FROM ped_logistica p " +
-                "INNER JOIN ped_logistica_recojo r ON p.ped_logistica_id = r.recojo_id";
+                "INNER JOIN ped_logistica_recojo r ON p.id_ped_logistica = r.id_recojo";
 
         try(Connection connection = DBManager.getInstance().getConnection();
             Statement stm = connection.createStatement();
@@ -35,11 +35,11 @@ public class PedLogisticaRecojoDAOImpl implements PedLogisticaRecojoDAO {
 
     @Override
     public PedLogisticaRecojo load(Integer id) {
-        String sql = "SELECT p.ped_logistica_id, p.estado_logistico, p.receptor_nombre, p.receptor_tipo_doc, p.receptor_nro_doc, p.receptor_cel, " +
+        String sql = "SELECT p.id_ped_logistica, p.estado_logistica, p.receptor_nombre, p.receptor_tipo_doc, p.receptor_nro_doc, p.receptor_cel, " +
                 "r.fec_lim_recojo, r.fec_recojo_real " +
                 "FROM ped_logistica p " +
-                "INNER JOIN ped_logistica_recojo r ON p.ped_logistica_id = r.recojo_id " +
-                "WHERE p.ped_logistica_id = ?";
+                "INNER JOIN ped_logistica_recojo r ON p.id_ped_logistica = r.id_recojo " +
+                "WHERE p.id_ped_logistica = ?";
 
         try(Connection connection = DBManager.getInstance().getConnection();
             PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -58,8 +58,8 @@ public class PedLogisticaRecojoDAOImpl implements PedLogisticaRecojoDAO {
 
     @Override
     public PedLogisticaRecojo save(PedLogisticaRecojo recojo) {
-        String sqlPadre = "INSERT INTO ped_logistica (estado_logistico, receptor_nombre, receptor_tipo_doc, receptor_nro_doc, receptor_cel) VALUES (?, ?, ?, ?, ?)";
-        String sqlHijo = "INSERT INTO ped_logistica_recojo (recojo_id, fec_lim_recojo, fec_recojo_real) VALUES (?, ?, ?)";
+        String sqlPadre = "INSERT INTO ped_logistica (estado_logistica, receptor_nombre, receptor_tipo_doc, receptor_nro_doc, receptor_cel) VALUES (?, ?, ?, ?, ?)";
+        String sqlHijo = "INSERT INTO ped_logistica_recojo (id_recojo, fec_lim_recojo, fec_recojo_real) VALUES (?, ?, ?)";
 
         try(Connection connection = DBManager.getInstance().getConnection()) {
 
@@ -97,8 +97,8 @@ public class PedLogisticaRecojoDAOImpl implements PedLogisticaRecojoDAO {
 
     @Override
     public PedLogisticaRecojo update(PedLogisticaRecojo recojo) {
-        String sqlPadre = "UPDATE ped_logistica SET estado_logistico = ?, receptor_nombre = ?, receptor_tipo_doc = ?, receptor_nro_doc = ?, receptor_cel = ? WHERE ped_logistica_id = ?";
-        String sqlHijo = "UPDATE ped_logistica_recojo SET fec_lim_recojo = ?, fec_recojo_real = ? WHERE recojo_id = ?";
+        String sqlPadre = "UPDATE ped_logistica SET estado_logistica = ?, receptor_nombre = ?, receptor_tipo_doc = ?, receptor_nro_doc = ?, receptor_cel = ? WHERE id_ped_logistica = ?";
+        String sqlHijo = "UPDATE ped_logistica_recojo SET fec_lim_recojo = ?, fec_recojo_real = ? WHERE id_recojo = ?";
 
         try(Connection connection = DBManager.getInstance().getConnection()) {
 
@@ -130,7 +130,7 @@ public class PedLogisticaRecojoDAOImpl implements PedLogisticaRecojoDAO {
     public void remove(PedLogisticaRecojo recojo) {
         // Eliminado Lógico
         recojo.setEstadoLogistica(EstadoLogistica.DEVUELTO_A_ORIGEN); // O INTENTO_FALLIDO
-        String sql = "UPDATE ped_logistica SET estado_logistico = ? WHERE ped_logistica_id = ?";
+        String sql = "UPDATE ped_logistica SET estado_logistica = ? WHERE id_ped_logistica = ?";
 
         try(Connection connection = DBManager.getInstance().getConnection();
             PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -189,10 +189,10 @@ public class PedLogisticaRecojoDAOImpl implements PedLogisticaRecojoDAO {
         PedLogisticaRecojo recojo = new PedLogisticaRecojo();
 
         // Mapeo atributos del PADRE
-        recojo.setPedLogisticaId(rs.getInt("ped_logistica_id"));
-        recojo.setRecojoId(rs.getInt("ped_logistica_id"));
+        recojo.setPedLogisticaId(rs.getInt("id_ped_logistica"));
+        recojo.setRecojoId(rs.getInt("id_ped_logistica"));
 
-        String estadoStr = rs.getString("estado_logistico");
+        String estadoStr = rs.getString("estado_logistica");
         if(estadoStr != null) recojo.setEstadoLogistica(EstadoLogistica.valueOf(estadoStr));
 
         recojo.setReceptorNombre(rs.getString("receptor_nombre"));

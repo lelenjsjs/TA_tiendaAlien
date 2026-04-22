@@ -17,9 +17,10 @@ public class PedLogisticaEnvioDAOImpl implements PedLogisticaEnvioDAO {
     public List<PedLogisticaEnvio> listAll() {
         List<PedLogisticaEnvio> list = new ArrayList<>();
         // Hacemos INNER JOIN para traer los datos del Padre y del Hijo a la vez
-        String sql = "SELECT * " +
+        String sql = "SELECT p.id_ped_logistica, p.estado_logistica, p.receptor_nombre, p.receptor_tipo_doc, p.receptor_nro_doc, p.receptor_cel, " +
+                "e.tipo_envio, e.modalidad_pago, e.direccion_entrega, e.referencia, e.cod_tracking, e.costo_envio, e.fec_estimada, e.notas_adicionales, e.fec_real " +
                 "FROM ped_logistica p " +
-                "INNER JOIN ped_logistica_envio e ON p.ped_logistica_id = e.envio_id";
+                "INNER JOIN ped_logistica_envio e ON p.id_ped_logistica = e.id_envio";
 
         try(Connection connection = DBManager.getInstance().getConnection();
             Statement stm = connection.createStatement();
@@ -36,10 +37,11 @@ public class PedLogisticaEnvioDAOImpl implements PedLogisticaEnvioDAO {
 
     @Override
     public PedLogisticaEnvio load(Integer id) {
-        String sql = "SELECT * " +
+        String sql = "SELECT p.id_ped_logistica, p.estado_logistica, p.receptor_nombre, p.receptor_tipo_doc, p.receptor_nro_doc, p.receptor_cel, " +
+                "e.tipo_envio, e.modalidad_pago, e.direccion_entrega, e.referencia, e.cod_tracking, e.costo_envio, e.fec_estimada, e.notas_adicionales, e.fec_real " +
                 "FROM ped_logistica p " +
-                "INNER JOIN ped_logistica_envio e ON p.ped_logistica_id = e.envio_id " +
-                "WHERE p.ped_logistica_id = ?";
+                "INNER JOIN ped_logistica_envio e ON p.id_ped_logistica = e.id_envio " +
+                "WHERE p.id_ped_logistica = ?";
 
         try(Connection connection = DBManager.getInstance().getConnection();
             PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -59,8 +61,8 @@ public class PedLogisticaEnvioDAOImpl implements PedLogisticaEnvioDAO {
     @Override
     public PedLogisticaEnvio save(PedLogisticaEnvio envio) {
         // 1. Insertar primero en la tabla PADRE (ped_logistica)
-        String sqlPadre = "INSERT INTO ped_logistica (estado_logistico, receptor_nombre, receptor_tipo_doc, receptor_nro_doc, receptor_cel) VALUES (?, ?, ?, ?, ?)";
-        String sqlHijo = "INSERT INTO ped_logistica_envio (envio_id, tipo_envio, modalidad_pago, direccion_entrega, referencia, cod_tracking, costo_envio, fec_estimada, notas_adicionales, fec_entrega_real) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlPadre = "INSERT INTO ped_logistica (estado_logistica, receptor_nombre, receptor_tipo_doc, receptor_nro_doc, receptor_cel) VALUES (?, ?, ?, ?, ?)";
+        String sqlHijo = "INSERT INTO ped_logistica_envio (id_envio, tipo_envio, modalidad_pago, direccion_entrega, referencia, cod_tracking, costo_envio, fec_estimada, notas_adicionales, fec_real) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try(Connection connection = DBManager.getInstance().getConnection()) {
 
@@ -110,8 +112,8 @@ public class PedLogisticaEnvioDAOImpl implements PedLogisticaEnvioDAO {
 
     @Override
     public PedLogisticaEnvio update(PedLogisticaEnvio envio) {
-        String sqlPadre = "UPDATE ped_logistica SET estado_logistico = ?, receptor_nombre = ?, receptor_tipo_doc = ?, receptor_nro_doc = ?, receptor_cel = ? WHERE ped_logistica_id = ?";
-        String sqlHijo = "UPDATE ped_logistica_envio SET tipo_envio = ?, modalidad_pago = ?, direccion_entrega = ?, referencia = ?, cod_tracking = ?, costo_envio = ?, fec_estimada = ?, notas_adicionales = ?, fec_entrega_real = ? WHERE envio_id = ?";
+        String sqlPadre = "UPDATE ped_logistica SET estado_logistica = ?, receptor_nombre = ?, receptor_tipo_doc = ?, receptor_nro_doc = ?, receptor_cel = ? WHERE id_ped_logistica = ?";
+        String sqlHijo = "UPDATE ped_logistica_envio SET tipo_envio = ?, modalidad_pago = ?, direccion_entrega = ?, referencia = ?, cod_tracking = ?, costo_envio = ?, fec_estimada = ?, notas_adicionales = ?, fec_real = ? WHERE id_envio = ?";
 
         try(Connection connection = DBManager.getInstance().getConnection()) {
 
@@ -152,7 +154,7 @@ public class PedLogisticaEnvioDAOImpl implements PedLogisticaEnvioDAO {
         // e-commerce lo normal es cambiar el estado a "INTENTO_FALLIDO" o "DEVUELTO_A_ORIGEN"
         envio.setEstadoLogistica(EstadoLogistica.DEVUELTO_A_ORIGEN);
 
-        String sql = "UPDATE ped_logistica SET estado_logistico = ? WHERE ped_logistica_id = ?";
+        String sql = "UPDATE ped_logistica SET estado_logistica = ? WHERE id_ped_logistica = ?";
         try(Connection connection = DBManager.getInstance().getConnection();
             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, envio.getEstadoLogistica().name());
@@ -167,10 +169,10 @@ public class PedLogisticaEnvioDAOImpl implements PedLogisticaEnvioDAO {
         PedLogisticaEnvio envio = new PedLogisticaEnvio();
 
         // Mapeo atributos del PADRE
-        envio.setPedLogisticaId(rs.getInt("ped_logistica_id"));
-        envio.setEnvioId(rs.getInt("id_ped_logistica_id")); // Asumimos que comparten el mismo ID
+        envio.setPedLogisticaId(rs.getInt("id_ped_logistica"));
+        envio.setEnvioId(rs.getInt("id_ped_logistica")); // Asumimos que comparten el mismo ID
 
-        String estadoStr = rs.getString("estado_logistico");
+        String estadoStr = rs.getString("estado_logistica");
         if(estadoStr != null) envio.setEstadoLogistica(EstadoLogistica.valueOf(estadoStr));
 
         envio.setReceptorNombre(rs.getString("receptor_nombre"));
@@ -191,7 +193,7 @@ public class PedLogisticaEnvioDAOImpl implements PedLogisticaEnvioDAO {
         envio.setCostoEnvio(rs.getDouble("costo_envio"));
         envio.setFec_estimadaEntrega(rs.getDate("fec_estimada"));
         envio.setNotasAdicionales(rs.getString("notas_adicionales"));
-        envio.setFecEntregaReal(rs.getDate("fec_entrega_real"));
+        envio.setFecEntregaReal(rs.getDate("fec_real"));
 
         return envio;
     }
