@@ -17,20 +17,20 @@ public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
 
     @Override
     public List<ComprobantePago> listAll() {
-//        List<ComprobantePago> list = new ArrayList<>();
-//        String sql = "SELECT * FROM comprobante_pago";
-//
-//        try(Connection connection = DBManager.getInstance().getConnection();
-//            Statement stm = connection.createStatement();
-//            ResultSet rs = stm.executeQuery(sql)) {
-//
-//            while (rs.next()) {
-//                list.add(mapearObjeto(rs));
-//            }
-//            return list;
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
+        List<ComprobantePago> list = new ArrayList<>();
+        String sql = "SELECT * FROM comprobante_pago";
+
+        try(Connection connection = DBManager.getInstance().getConnection();
+            Statement stm = connection.createStatement();
+            ResultSet rs = stm.executeQuery(sql)) {
+
+            while (rs.next()) {
+                list.add(mapearObjeto(rs));
+            }
+            return list;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
