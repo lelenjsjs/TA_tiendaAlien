@@ -14,7 +14,6 @@ public class PedLogisticaEnvio extends PedLogistica{
     private String notasAdicionales;
     private Date fecEntregaReal;
 
-    private PedLogistica pedLogistica;
     private AgenciaEnvio agenciaEnvio;
     private TarifaEnvio tarifaEnvio;
 
@@ -100,14 +99,6 @@ public class PedLogisticaEnvio extends PedLogistica{
 
     public void setFecEntregaReal(Date fecEntregaReal) {
         this.fecEntregaReal = fecEntregaReal;
-    }
-
-    public PedLogistica getPedLogistica() {
-        return pedLogistica;
-    }
-
-    public void setPedLogistica(PedLogistica pedLogistica) {
-        this.pedLogistica = pedLogistica;
     }
 
     public AgenciaEnvio getAgenciaEnvio() {
