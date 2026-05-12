@@ -12,14 +12,28 @@ import java.util.List;
 public class CategoriaDAOImpl implements CategoriaDAO {
 
     @Override
-    public Categoria loadByName(Integer id) {
+    public Categoria loadByName(String nombre) {
+        String sql = "SELECT categoria_id, nombre, familia,es_activo FROM categoria WHERE nombre = ?";
+
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, nombre);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return crearCategoria(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al cargar Categoría con Nombre: " + nombre, e);
+        }
         return null;
     }
 
     @Override
     public List<Categoria> listAll() {
         List<Categoria> lista = new ArrayList<>();
-        String sql = "SELECT categoria_id, nombre, familia FROM categorias WHERE es_activo=1";
+        String sql = "SELECT categoria_id, nombre, familia, es_activo FROM categoria WHERE es_activo=1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
@@ -36,7 +50,7 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 
     @Override
     public Categoria loadById(Integer id) {
-        String sql = "SELECT categoria_id, nombre, familia,es_activo FROM categorias WHERE categoria_id = ?";
+        String sql = "SELECT categoria_id, nombre, familia,es_activo FROM categoria WHERE categoria_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -55,7 +69,7 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 
     @Override
     public Categoria save(Categoria c) {
-        String sql = "INSERT INTO categorias (nombre, familia) VALUES (?, ?)";
+        String sql = "INSERT INTO categoria (nombre, familia) VALUES (?, ?)";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -79,7 +93,7 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 
     @Override
     public Categoria update(Categoria c) {
-        String sql = "UPDATE categorias SET nombre = ?, familia = ? WHERE categoria_id = ?";
+        String sql = "UPDATE categoria SET nombre = ?, familia = ? WHERE categoria_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -97,7 +111,7 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 
     @Override
     public void remove(Categoria c) {
-        String sql = "UPDATE categorias SET es_activo = 0 WHERE categoria_id = ?";
+        String sql = "UPDATE categoria SET es_activo=0 WHERE categoria_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -114,12 +128,13 @@ public class CategoriaDAOImpl implements CategoriaDAO {
         Categoria c = new Categoria();
         c.setCategoriaId(rs.getInt("categoria_id"));
         c.setNombre(rs.getString("nombre"));
-        // Convertimos el String de la BD de vuelta al Enum Familia
-        String familiaStr = rs.getString("familia");
+
+        // 1. Sacamos el texto de la base de datos (ej: "PRODUCTO SELLADO")
+        String textoBD = rs.getString("familia");
+        // 2. Lo convertimos en enum
+        c.setFamilia(Familia.desdeTexto(textoBD));
+
         c.setEsActivo(rs.getBoolean("es_activo"));
-        if (familiaStr != null) {
-            c.setFamilia(Familia.valueOf(familiaStr));
-        }
         return c;
     }
 }

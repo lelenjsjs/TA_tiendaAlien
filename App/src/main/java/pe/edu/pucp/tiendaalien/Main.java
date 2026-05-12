@@ -7,9 +7,13 @@ import java.util.ResourceBundle;
 
 import pe.edu.pucp.tiendaalien.bl.BusinessLogicException;
 import pe.edu.pucp.tiendaalien.bl.IAgenciaEnvioBL;
+import pe.edu.pucp.tiendaalien.bl.ICategoriaBL;
 import pe.edu.pucp.tiendaalien.bl.impl.AgenciaEnvioBLImpl;
+import pe.edu.pucp.tiendaalien.bl.impl.CategoriaBLImpl;
 import pe.edu.pucp.tiendaalien.dao.UbigeoDAO;
 import pe.edu.pucp.tiendaalien.dao.impl.UbigeoDAOImpl;
+import pe.edu.pucp.tiendaalien.model.catalogo.Categoria;
+import pe.edu.pucp.tiendaalien.model.catalogo.Familia;
 import pe.edu.pucp.tiendaalien.model.usuarios.Ubigeo;
 
 import pe.edu.pucp.tiendaalien.dao.AgenciaEnvioDAO;
@@ -36,69 +40,70 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws BusinessLogicException {
-        /* ////////////////////////// AGENCIA DE ENVIO /////////////////////////////// */
-        IAgenciaEnvioBL agenciaEnvioBL = new AgenciaEnvioBLImpl();
+        /* ////////////////////////// CATEGORIA /////////////////////////////// */
+        ICategoriaBL categoriaBL = new CategoriaBLImpl();
 
-        /* 1. Registrar una agencia de envio: CREATE =====================================================*/
-        String nombreAgencia = "Shamurr";
-        String url = "https:/www.shamurr.com";
-        AgenciaEnvio agenciaRecibida = new AgenciaEnvio(nombreAgencia,url);
-        agenciaRecibida = agenciaEnvioBL.registrarAgencia(agenciaRecibida);
-
-        System.out.println(agenciaRecibida);
+        /* 1. Registrar una categoria: CREATE =====================================================*/
+//        String nombreCategoria = "Cartas coleccionables";
+//        Familia familia = Familia.ACCESORIO;
+//        Categoria categoriaACrear = new Categoria(nombreCategoria,familia);
+//        categoriaACrear = categoriaBL.registrarCategoria(categoriaACrear);
+//
+//        System.out.println(categoriaACrear);
 
         /* 2. Buscar agencia por ID: READ ================================================================*/
-        int idDeLaAgencia = 2;// !!!!!!!!!!!!!!!!!
-        AgenciaEnvio agenciaEnvioPorId = agenciaEnvioBL.cargarAgenciaPorId(idDeLaAgencia);
-        System.out.println("Buscando Agencia " + "con ID = ...."+idDeLaAgencia);
-        if(agenciaEnvioPorId == null){
-            System.out.println("Agencia no encontrada");
-        }
-        else {
-            System.out.println(agenciaEnvioPorId);
-        }
+//        int idCategoria = 1;
+//        Categoria categoriaPorId = categoriaBL.cargarCategoriaPorId(idCategoria);
+//        System.out.println("Buscando Categoria " + "con ID = " + idCategoria + "....");
+//        if(categoriaPorId == null){
+//            System.out.println("Categoria no encontrada");
+//        }
+//        else {
+//            System.out.println(categoriaPorId);
+//        }
 
-        /* 3. Actualizar una agencia de envio: UPDATE =====================================================*/
-        String nombreOriginalAgencia = "Shalom";// !!!!!!!!!!!!!
-        AgenciaEnvio agenciaACambiar = agenciaEnvioBL.cargarAgenciaPorNombre(nombreOriginalAgencia);
-        System.out.println(agenciaACambiar);
-
-        String nuevoUrl = "https://shalomurl.pe/rastreo"; // !!!!!!!!!!!!
-        agenciaACambiar.setUrlTracking(nuevoUrl);// !!!!!!!!!!!!!
-
-        agenciaACambiar = agenciaEnvioBL.modificarAgencia(agenciaACambiar);
-        System.out.println(agenciaACambiar);
-
+        /* 3. Actualizar una categoria de envio: UPDATE =====================================================*/
+//        String nombreCategoria = "Sellado";// !!!!!!!!!!!!!
+//        Categoria categoriaACambiar = categoriaBL.cargarCategoriaPorNombre(nombreCategoria);
+//        System.out.println("ORIGINAL -> " + categoriaACambiar);
+//
+//        String nombreAColocar = "Sin abrir"; // !!!!!!!!!!!!
+//        categoriaACambiar.setNombre(nombreAColocar);
+//
+//        categoriaACambiar = categoriaBL.modificarCategoria(categoriaACambiar);
+//        System.out.println("MODIFICADO -> " + categoriaACambiar);
+//
         /* 4. Desactivar la agencia de envio: "DELETE" ==================================================== */
-        String nombreAgenciaAEliminar = "Shalom";// !!!!!!!!!!!!!!!!
-        AgenciaEnvio agenciaAEliminar = agenciaEnvioBL.cargarAgenciaPorNombre(nombreAgenciaAEliminar);
+//        String nombreCategoriaAEliminar = "Cartas Sueltas";// !!!!!!
+//        Categoria categoriaAEliminar = categoriaBL.cargarCategoriaPorNombre(nombreCategoriaAEliminar);
+//
+//        System.out.println("Eliminare : " + categoriaAEliminar);
+//        categoriaBL.eliminarCategoria(categoriaAEliminar);
 
-        System.out.println("Eliminare : " + nombreAgenciaAEliminar);
-        agenciaEnvioBL.eliminarAgencia(agenciaAEliminar);
-
-        /* 5. Listar todas ================================================================================ */
-        List<AgenciaEnvio> listaAgenciasEnvio = agenciaEnvioBL.listarAgenciasDeEnvio();
-
-        if(listaAgenciasEnvio.isEmpty()){
-            System.out.println("No hay agencias de envio registradas");
-        }
-        else {
-            System.out.println("AGENCIAS DE ENVIO");
-            for (AgenciaEnvio agenciaEnvio : listaAgenciasEnvio) {
-                System.out.println(agenciaEnvio);
-            }
-        }
-
+//
+//        /* 5. Listar todas ================================================================================ */
+//        List<Categoria> listaCategorias = categoriaBL.listarCategorias();
+//
+//        if(listaCategorias.isEmpty()){
+//            System.out.println("No hay categorias registradas");
+//        }
+//        else {
+//            System.out.println("CATEGORIAS");
+//            for (Categoria categoria : listaCategorias) {
+//                System.out.println(categoria);
+//            }
+//        }
+//
         /* 6. Buscar agencia por nombre ================================================================== */
-        String nombreAgenciaABuscar = "Olva Courier";
-        AgenciaEnvio agenciaEnvioPorNom = agenciaEnvioBL.cargarAgenciaPorNombre(nombreAgenciaABuscar);
-        System.out.println("Buscando Agencia " + nombreAgenciaABuscar);
-        if(agenciaEnvioPorNom == null){
-            System.out.println("Agencia no encontrada");
-        }
-        else {
-            System.out.println(agenciaEnvioPorNom);
-        }
+//        String nombreCategoriaParaBuscar = "Accesorios";
+//        Categoria categoriaPorNom = categoriaBL.cargarCategoriaPorNombre(nombreCategoriaParaBuscar);
+//        System.out.println("Buscando Categoria:  " + nombreCategoriaParaBuscar);
+//        if(categoriaPorNom == null){
+//            System.out.println("Categoria no encontrada");
+//        }
+//        else {
+//            System.out.println(categoriaPorNom);
+//        }
 
 
 

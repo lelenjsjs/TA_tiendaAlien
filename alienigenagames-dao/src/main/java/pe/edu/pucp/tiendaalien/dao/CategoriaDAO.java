@@ -5,6 +5,6 @@ import pe.edu.pucp.tiendaalien.model.catalogo.Categoria;
 import java.util.List;
 
 public interface CategoriaDAO extends BaseDAO<Categoria, Integer> {
-    Categoria loadByName(Integer id);
+    Categoria loadByName(String nombre);
     List<Categoria> listAll();
 }

@@ -49,4 +49,8 @@ public class Categoria {
     public void setEsActivo(Boolean esActivo) {
         this.esActivo = esActivo;
     }
+
+    public String toString(){
+        return "ID = " + this.categoriaId + ", Nombre = " + this.nombre + ", Familia = " + this.familia +"\n";
+    }
 }
