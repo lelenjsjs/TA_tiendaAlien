@@ -1,6 +1,7 @@
 package pe.edu.pucp.tiendaalien.bl;
 
-import pe.edu.pucp.tiendaalien.model.comprobante.ComprobantePago;
+
+import pe.edu.pucp.tiendaalien.model.facturacion.ComprobantePago;
 import java.util.List;
 
 public interface IComprobantePagoBL {

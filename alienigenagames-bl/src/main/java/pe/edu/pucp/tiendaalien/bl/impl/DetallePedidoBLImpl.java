@@ -4,7 +4,7 @@ import pe.edu.pucp.tiendaalien.bl.BusinessLogicException;
 import pe.edu.pucp.tiendaalien.bl.IDetallePedidoBL;
 import pe.edu.pucp.tiendaalien.dao.DetallePedidoDAO;
 import pe.edu.pucp.tiendaalien.dao.impl.DetallePedidoDAOImpl;
-import pe.edu.pucp.tiendaalien.model.pedido.DetallePedido;
+import pe.edu.pucp.tiendaalien.model.ventas.DetallePed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,40 +14,41 @@ public class DetallePedidoBLImpl implements IDetallePedidoBL {
     private DetallePedidoDAO detallePedidoDAO = new DetallePedidoDAOImpl();
 
     @Override
-    public List<DetallePedido> listarDetallesPorPedido(Integer idPedido) throws BusinessLogicException {
+    public List<DetallePed> listarDetallesPorPedido(Integer idPedido) throws BusinessLogicException {
         if (idPedido == null || idPedido <= 0) {
             throw new BusinessLogicException("Se requiere un ID de pedido válido para listar sus detalles.");
         }
-        // Asumiendo que tu DAO tiene un método para filtrar por pedido
-        List<DetallePedido> lista = detallePedidoDAO.listByPedido(idPedido);
+        // Se corrigió DetallePedido a DetallePed
+        List<DetallePed> lista = detallePedidoDAO.listByPedido(idPedido);
         return (lista != null) ? lista : new ArrayList<>();
     }
 
     @Override
-    public DetallePedido cargarDetallePorId(Integer id) throws BusinessLogicException {
+    public DetallePed cargarDetallePorId(Integer id) throws BusinessLogicException {
         if (id == null || id <= 0) {
             throw new BusinessLogicException("El ID del detalle no es válido.");
         }
-        DetallePedido detalle = detallePedidoDAO.load(id);
-        return (detalle != null) ? detalle : new DetallePedido();
+        // Se corrigió DetallePedido a DetallePed
+        DetallePed detalle = detallePedidoDAO.load(id);
+        return (detalle != null) ? detalle : new DetallePed();
     }
 
     @Override
-    public DetallePedido registrarDetalle(DetallePedido detalle) throws BusinessLogicException {
+    public DetallePed registrarDetalle(DetallePed detalle) throws BusinessLogicException {
         // false = Nuevo registro
         validar(detalle, false);
         return detallePedidoDAO.save(detalle);
     }
 
     @Override
-    public DetallePedido modificarDetalle(DetallePedido detalle) throws BusinessLogicException {
+    public DetallePed modificarDetalle(DetallePed detalle) throws BusinessLogicException {
         // true = Edición
         validar(detalle, true);
         return detallePedidoDAO.update(detalle);
     }
 
     @Override
-    public void eliminarDetalle(DetallePedido detalle) throws BusinessLogicException {
+    public void eliminarDetalle(DetallePed detalle) throws BusinessLogicException {
         if (detalle == null || detalle.getDetallePedId() == null || detalle.getDetallePedId() <= 0) {
             throw new BusinessLogicException("Debe especificar un detalle válido para eliminar.");
         }
@@ -57,7 +58,8 @@ public class DetallePedidoBLImpl implements IDetallePedidoBL {
     // =========================================================================
     // MÓDULO DE VALIDACIONES (REGLAS DE NEGOCIO)
     // =========================================================================
-    private void validar(DetallePedido d, boolean esModificacion) throws BusinessLogicException {
+    // Se corrigió el parámetro de DetallePedido a DetallePed
+    private void validar(DetallePed d, boolean esModificacion) throws BusinessLogicException {
         if (d == null) {
             throw new BusinessLogicException("El detalle del pedido no puede ser nulo.");
         }

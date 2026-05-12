@@ -4,7 +4,9 @@ import pe.edu.pucp.tiendaalien.bl.BusinessLogicException;
 import pe.edu.pucp.tiendaalien.bl.IComprobantePagoBL;
 import pe.edu.pucp.tiendaalien.dao.ComprobantePagoDAO;
 import pe.edu.pucp.tiendaalien.dao.impl.ComprobantePagoDAOImpl;
-import pe.edu.pucp.tiendaalien.model.comprobante.ComprobantePago;
+
+// ¡Ruta corregida!
+import pe.edu.pucp.tiendaalien.model.facturacion.ComprobantePago;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,75 +24,59 @@ public class ComprobantePagoBLImpl implements IComprobantePagoBL {
     @Override
     public ComprobantePago cargarComprobantePorId(Integer id) throws BusinessLogicException {
         if (id == null || id <= 0) {
-            throw new BusinessLogicException("El ID del comprobante debe ser mayor a cero.");
+            throw new BusinessLogicException("El ID del comprobante no es válido.");
         }
-        ComprobantePago comprobante = comprobantePagoDAO.load(id);
+        ComprobantePago comprobante = comprobantePagoDAO.loadById(id);
         return (comprobante != null) ? comprobante : new ComprobantePago();
     }
 
     @Override
     public ComprobantePago registrarComprobante(ComprobantePago comprobante) throws BusinessLogicException {
-        // false = Es un registro nuevo. No exigimos que tenga un ID de comprobante previo.
+        // false = Nuevo registro
         validar(comprobante, false);
         return comprobantePagoDAO.save(comprobante);
     }
 
     @Override
     public ComprobantePago modificarComprobante(ComprobantePago comprobante) throws BusinessLogicException {
-        // true = Es modificación. Exigimos que el ID de comprobante ya exista.
+        // true = Edición
         validar(comprobante, true);
         return comprobantePagoDAO.update(comprobante);
     }
 
     @Override
     public void eliminarComprobante(ComprobantePago comprobante) throws BusinessLogicException {
-        if (comprobante == null || comprobante.getComprobanteId() == null || comprobante.getComprobanteId() <= 0) {
-            throw new BusinessLogicException("Se requiere un comprobante válido y con ID para eliminarlo.");
+        if (comprobante == null || comprobante.getComprobante_id() == null || comprobante.getComprobante_id() <= 0) {
+            throw new BusinessLogicException("Debe especificar un comprobante válido para anular.");
         }
+        // Llama al remove del DAO (que ya hace el borrado lógico/anulación)
         comprobantePagoDAO.remove(comprobante);
     }
 
     // =========================================================================
-    // MÓDULO DE VALIDACIONES (REGLAS DE NEGOCIO)
+    // MÓDULO DE VALIDACIONES
     // =========================================================================
-
     private void validar(ComprobantePago c, boolean esModificacion) throws BusinessLogicException {
-
-        // 1. Validar que el objeto no llegue vacío
         if (c == null) {
             throw new BusinessLogicException("El comprobante no puede ser nulo.");
         }
 
-        // 2. Validar ID en caso de modificación (El interruptor)
-        if (esModificacion && (c.getComprobanteId() == null || c.getComprobanteId() <= 0)) {
-            throw new BusinessLogicException("El ID del comprobante es obligatorio para realizar una modificación.");
+        if (esModificacion && (c.getComprobante_id() == null || c.getComprobante_id() <= 0)) {
+            throw new BusinessLogicException("Se requiere el ID para modificar el comprobante.");
         }
 
-        // 3. Validar las Llaves Foráneas (Asociaciones obligatorias)
+        // Validación de relaciones obligatorias
         if (c.getPedido() == null || c.getPedido().getPedidoId() == null || c.getPedido().getPedidoId() <= 0) {
-            throw new BusinessLogicException("El comprobante debe estar obligatoriamente asociado a un Pedido válido.");
+            throw new BusinessLogicException("El comprobante debe estar asociado a un pedido válido.");
         }
 
-        if (c.getTipoComprobante() == null || c.getTipoComprobante().getTipoComprobanteId() == null || c.getTipoComprobante().getTipoComprobanteId() <= 0) {
-            throw new BusinessLogicException("Debe seleccionar un tipo de comprobante (Boleta/Factura) válido.");
+        if (c.getTipoComprobante() == null || c.getTipoComprobante().getTipo_comprobante_id() == null || c.getTipoComprobante().getTipo_comprobante_id() <= 0) {
+            throw new BusinessLogicException("El tipo de comprobante es obligatorio.");
         }
 
-        // 4. Validar datos del Cliente
-        if (c.getClienteNroDoc() == null || c.getClienteNroDoc().trim().isEmpty()) {
-            throw new BusinessLogicException("El número de documento del cliente es obligatorio.");
-        }
-        if (c.getClienteDenominacion() == null || c.getClienteDenominacion().trim().isEmpty()) {
-            throw new BusinessLogicException("El nombre/razón social del cliente es obligatorio.");
-        }
-
-        // 5. Validar Reglas Financieras (Montos)
-        if (c.getMontoTotal() < 0 || c.getMontoIgv() < 0 || c.getMontoGravado() < 0) {
-            throw new BusinessLogicException("Los montos del comprobante (Total, IGV, Gravado) no pueden ser negativos.");
-        }
-
-        // 6. Validar Estado SUNAT
-        if (c.getEstadoSunat() == null || c.getEstadoSunat().trim().isEmpty()) {
-            throw new BusinessLogicException("El estado SUNAT no puede estar vacío.");
+        // Blindaje financiero
+        if (c.getMonto_total() == null || c.getMonto_total() < 0) {
+            throw new BusinessLogicException("El monto total del comprobante no puede ser negativo.");
         }
     }
 }
