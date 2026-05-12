@@ -13,7 +13,8 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
     @Override
     public List<TipoComprobante> listAll() {
         List<TipoComprobante> lista = new ArrayList<>();
-        String sql = "SELECT tipo_comprobante_id, codigo_sunat, descripcion FROM tipo_comprobante";
+        // REGLA: Solo listar los activos
+        String sql = "SELECT tipo_comprobante_id, codigo_sunat, descripcion FROM tipo_comprobante WHERE es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
@@ -30,7 +31,8 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
 
     @Override
     public TipoComprobante loadById(Integer id) {
-        String sql = "SELECT tipo_comprobante_id, codigo_sunat, descripcion FROM tipo_comprobante WHERE tipo_comprobante_id = ?";
+        // REGLA: Solo cargar si está activo
+        String sql = "SELECT tipo_comprobante_id, codigo_sunat, descripcion FROM tipo_comprobante WHERE tipo_comprobante_id = ? AND es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -49,7 +51,7 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
 
     @Override
     public TipoComprobante save(TipoComprobante tc) {
-        String sql = "INSERT INTO tipo_comprobante (codigo_sunat, descripcion) VALUES (?, ?)";
+        String sql = "INSERT INTO tipo_comprobante (codigo_sunat, descripcion, es_activo) VALUES (?, ?, 1)";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -57,12 +59,10 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
             ps.setString(1, tc.getCodigo_sunat());
             ps.setString(2, tc.getDescripcion());
 
-            int rows = ps.executeUpdate();
-            if (rows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        tc.setTipo_comprobante_id(rs.getInt(1));
-                    }
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    tc.setTipo_comprobante_id(rs.getInt(1));
                 }
             }
             return tc;
@@ -91,7 +91,8 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
 
     @Override
     public void remove(TipoComprobante tc) {
-        String sql = "DELETE FROM tipo_comprobante WHERE tipo_comprobante_id = ?";
+        // REGLA CUMPLIDA: Borrado lógico con es_activo = 0
+        String sql = "UPDATE tipo_comprobante SET es_activo = 0 WHERE tipo_comprobante_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -99,7 +100,7 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
             ps.setInt(1, tc.getTipo_comprobante_id());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error al eliminar tipo de comprobante", e);
+            throw new RuntimeException("Error al eliminar (desactivar) tipo de comprobante", e);
         }
     }
 

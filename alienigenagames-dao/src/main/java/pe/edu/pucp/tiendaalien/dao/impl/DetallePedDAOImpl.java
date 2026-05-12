@@ -4,6 +4,7 @@ import pe.edu.pucp.tiendaalien.DBManager;
 import pe.edu.pucp.tiendaalien.dao.DetallePedDAO;
 import pe.edu.pucp.tiendaalien.model.catalogo.Producto;
 import pe.edu.pucp.tiendaalien.model.ventas.DetallePed;
+import pe.edu.pucp.tiendaalien.model.ventas.Pedido;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,165 +14,109 @@ public class DetallePedDAOImpl implements DetallePedDAO {
 
     @Override
     public List<DetallePed> listAll() {
-
         List<DetallePed> lista = new ArrayList<>();
-
-        String sql = """
-            SELECT detalle_ped_id,nombre_congelado,precio_un_congelado,es_preventa_congelado,cantidad
-            FROM detalle_pedido
-            WHERE activo = 1
-        """;
+        // REGLA: Filtramos por es_activo = 1 y usamos el nombre real 'detalle_ped'
+        String sql = "SELECT detalle_ped_id, pedido_id, producto_id, precio_unitario_congelado, " +
+                     "es_preventa_congelado, cantidad FROM detalle_ped WHERE es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
-
             while (rs.next()) {
                 lista.add(mapearDetalle(rs));
             }
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error al listar detalles", e);
         }
-
         return lista;
     }
 
     @Override
     public DetallePed loadById(Integer id) {
-
-        String sql = """
-            SELECT detalle_ped_id,nombre_congelado,precio_un_congelado,es_preventa_congelado,cantidad
-            FROM detalle_pedido
-            WHERE detalle_ped_id = ?
-        """;
+        String sql = "SELECT detalle_ped_id, pedido_id, producto_id, precio_unitario_congelado, " +
+                     "es_preventa_congelado, cantidad FROM detalle_ped " +
+                     "WHERE detalle_ped_id = ? AND es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-
             ps.setInt(1, id);
-
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return mapearDetalle(rs);
-                }
+                if (rs.next()) return mapearDetalle(rs);
             }
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error al cargar detalle", e);
         }
-
         return null;
     }
 
     @Override
-    public DetallePed save(DetallePed detalle) {
-
-        String sql = """
-            INSERT INTO detalle_pedido(
-                nombre_congelado,
-                precio_un_congelado,
-                es_preventa_congelado,
-                cantidad,
-                producto_id,
-                activo
-            )
-            VALUES (?, ?, ?, ?, ?, 1)
-        """;
+    public DetallePed save(DetallePed d) {
+        String sql = "INSERT INTO detalle_ped (pedido_id, producto_id, precio_unitario_congelado, " +
+                     "es_preventa_congelado, cantidad, es_activo) VALUES (?, ?, ?, ?, ?, 1)";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            llenarPreparedStatement(ps, detalle);
+            ps.setInt(1, d.getPedido().getPedidoId());
+            ps.setInt(2, d.getProducto().getProductoId());
+            ps.setDouble(3, d.getPrecioUnitarioCongelado());
+            ps.setBoolean(4, d.isEsPreventaCongelado());
+            ps.setInt(5, d.getCantidad());
 
             ps.executeUpdate();
-
             try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    detalle.setDetallePedId(rs.getInt(1));
-                }
+                if (rs.next()) d.setDetallePedId(rs.getInt(1));
             }
-
-            return detalle;
-
+            return d;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error al guardar detalle", e);
         }
     }
 
     @Override
-    public DetallePed update(DetallePed detalle) {
-
-        String sql = """
-            UPDATE detalle_pedido SET
-                nombre_congelado = ?,
-                precio_un_congelado = ?,
-                es_preventa_congelado = ?,
-                cantidad = ?,
-                producto_id = ?
-            WHERE detalle_ped_id = ?
-        """;
+    public DetallePed update(DetallePed d) {
+        String sql = "UPDATE detalle_ped SET pedido_id = ?, producto_id = ?, precio_unitario_congelado = ?, " +
+                     "es_preventa_congelado = ?, cantidad = ? WHERE detalle_ped_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            llenarPreparedStatement(ps, detalle);
-            ps.setInt(6, detalle.getDetallePedId());
+            ps.setInt(1, d.getPedido().getPedidoId());
+            ps.setInt(2, d.getProducto().getProductoId());
+            ps.setDouble(3, d.getPrecioUnitarioCongelado());
+            ps.setBoolean(4, d.isEsPreventaCongelado());
+            ps.setInt(5, d.getCantidad());
+            ps.setInt(6, d.getDetallePedId());
 
             ps.executeUpdate();
-
-            return detalle;
-
+            return d;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error al actualizar detalle", e);
         }
     }
 
     @Override
-    public void remove(DetallePed detalle) {
-
-        String sql = """
-            UPDATE detalle_pedido
-            SET activo = 0
-            WHERE detalle_ped_id = ?
-        """;
-
+    public void remove(DetallePed d) {
+        // REGLA: UPDATE es_activo = 0 (Borrado Lógico)
+        String sql = "UPDATE detalle_ped SET es_activo = 0 WHERE detalle_ped_id = ?";
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, detalle.getDetallePedId());
+            ps.setInt(1, d.getDetallePedId());
             ps.executeUpdate();
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error al eliminar detalle", e);
         }
     }
 
     private DetallePed mapearDetalle(ResultSet rs) throws SQLException {
-
         DetallePed d = new DetallePed();
-
         d.setDetallePedId(rs.getInt("detalle_ped_id"));
-        d.setNombreCongelado(rs.getString("nombre_congelado"));
-        d.setPrecioUnCongelado(rs.getDouble("precio_un_congelado"));
+        d.setPrecioUnitarioCongelado(rs.getDouble("precio_unitario_congelado"));
         d.setEsPreventaCongelado(rs.getBoolean("es_preventa_congelado"));
         d.setCantidad(rs.getInt("cantidad"));
 
-        Producto producto = new Producto();
-        producto.setProductoId(rs.getInt("producto_id"));
-        d.setProducto(producto);
-
+        Pedido p = new Pedido(); p.setPedidoId(rs.getInt("pedido_id")); d.setPedido(p);
+        Producto prod = new Producto(); prod.setProductoId(rs.getInt("producto_id")); d.setProducto(prod);
         return d;
-    }
-
-    private void llenarPreparedStatement(
-            PreparedStatement ps,
-            DetallePed d) throws SQLException {
-
-        ps.setString(1, d.getNombreCongelado());
-        ps.setDouble(2, d.getPrecioUnCongelado());
-        ps.setBoolean(3, d.isEsPreventaCongelado());
-        ps.setInt(4, d.getCantidad());
-        ps.setInt(5, d.getProducto().getProductoId());
     }
 }
