@@ -3,7 +3,6 @@ package pe.edu.pucp.tiendaalien.dao.impl;
 import pe.edu.pucp.tiendaalien.dao.ColeccionDAO;
 import pe.edu.pucp.tiendaalien.DBManager;
 import pe.edu.pucp.tiendaalien.model.catalogo.Coleccion;
-import pe.edu.pucp.tiendaalien.model.catalogo.Franquicia;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,7 +13,8 @@ public class ColeccionDAOImpl implements ColeccionDAO {
     @Override
     public List<Coleccion> listAll() {
         List<Coleccion> lista = new ArrayList<>();
-        String sql = "SELECT coleccion_id, nombre, franquicia_id FROM colecciones";
+        // REGLA: Solo activos y usamos el nombre correcto de la tabla 'coleccion'
+        String sql = "SELECT coleccion_id, nombre FROM coleccion WHERE es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
@@ -31,7 +31,7 @@ public class ColeccionDAOImpl implements ColeccionDAO {
 
     @Override
     public Coleccion loadById(Integer id) {
-        String sql = "SELECT coleccion_id, nombre, franquicia_id FROM colecciones WHERE coleccion_id = ?";
+        String sql = "SELECT coleccion_id, nombre FROM coleccion WHERE coleccion_id = ? AND es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -50,13 +50,13 @@ public class ColeccionDAOImpl implements ColeccionDAO {
 
     @Override
     public Coleccion save(Coleccion c) {
-        String sql = "INSERT INTO colecciones (nombre, franquicia_id) VALUES (?, ?)";
+        // Solo insertamos el nombre
+        String sql = "INSERT INTO coleccion (nombre) VALUES (?)";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, c.getNombre());
-            ps.setInt(2, c.getFranquicia().getFranquiciaId());
 
             int rows = ps.executeUpdate();
             if (rows > 0) {
@@ -74,14 +74,13 @@ public class ColeccionDAOImpl implements ColeccionDAO {
 
     @Override
     public Coleccion update(Coleccion c) {
-        String sql = "UPDATE colecciones SET nombre = ?, franquicia_id = ? WHERE coleccion_id = ?";
+        String sql = "UPDATE coleccion SET nombre = ? WHERE coleccion_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, c.getNombre());
-            ps.setInt(2, c.getFranquicia().getFranquiciaId());
-            ps.setInt(3, c.getColeccionId());
+            ps.setInt(2, c.getColeccionId());
 
             ps.executeUpdate();
             return c;
@@ -92,13 +91,18 @@ public class ColeccionDAOImpl implements ColeccionDAO {
 
     @Override
     public void remove(Coleccion c) {
-        String sql = "DELETE FROM colecciones WHERE coleccion_id = ?";
+        // REGLA: Borrado lógico
+        String sql = "UPDATE coleccion SET es_activo = 0 WHERE coleccion_id = ? AND es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, c.getColeccionId());
-            ps.executeUpdate();
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected == 0) {
+                System.out.println("La colección a eliminar ya está desactivada o no existe.");
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Error al eliminar Colección", e);
         }
@@ -108,12 +112,7 @@ public class ColeccionDAOImpl implements ColeccionDAO {
         Coleccion c = new Coleccion();
         c.setColeccionId(rs.getInt("coleccion_id"));
         c.setNombre(rs.getString("nombre"));
-
-        // Se crea el objeto Franquicia solo con el ID obtenido de la BD
-        Franquicia f = new Franquicia();
-        f.setFranquiciaId(rs.getInt("franquicia_id"));
-        c.setFranquicia(f);
-
+        // Ya no buscamos franquicia_id porque en tu script no existe
         return c;
     }
 }

@@ -14,49 +14,41 @@ public class DireccionUsuarioDAOImpl implements DireccionUsuarioDAO {
 
     @Override
     public DireccionUsuario save(DireccionUsuario d) {
-        // En tu script la tabla es: direccion_usuario
-        // Columnas: usuario_id, ubigeo_id, direccion, principal, referencia
-        String sql = "INSERT INTO direccion_usuario (usuario_id, ubigeo_id, direccion, principal, referencia) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO direccion_usuario (usuario_id, ubigeo_id, direccion, principal, referencia, es_activo) VALUES (?, ?, ?, ?, ?, 1)";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            // Extraemos los IDs de los objetos internos
             ps.setInt(1, d.getUsuario().getUsuarioId());
             ps.setInt(2, d.getUbigeo().getUbigeoId());
             ps.setString(3, d.getDireccion());
             ps.setBoolean(4, d.getEsPrincipal());
             ps.setString(5, d.getReferencia());
 
-            int rows = ps.executeUpdate();
-            if (rows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        d.setDireccionId(rs.getInt(1));
-                    }
-                }
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) d.setDireccionId(rs.getInt(1));
             }
             return d;
         } catch (SQLException e) {
-            throw new RuntimeException("Error al guardar la dirección del usuario", e);
+            throw new RuntimeException("Error al guardar la dirección", e);
         }
     }
 
     @Override
     public DireccionUsuario loadById(Integer id) {
-        String sql = "SELECT direccion_id, usuario_id, ubigeo_id, direccion, principal, referencia FROM direccion_usuario WHERE direccion_id = ?";
+        // REGLA: Filtramos por es_activo = 1
+        String sql = "SELECT * FROM direccion_usuario WHERE direccion_id = ? AND es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSet(rs);
-                }
+                if (rs.next()) return mapResultSet(rs);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error al cargar dirección con ID: " + id, e);
+            throw new RuntimeException("Error al cargar dirección", e);
         }
         return null;
     }
@@ -64,7 +56,8 @@ public class DireccionUsuarioDAOImpl implements DireccionUsuarioDAO {
     @Override
     public List<DireccionUsuario> listAll() {
         List<DireccionUsuario> lista = new ArrayList<>();
-        String sql = "SELECT * FROM direccion_usuario";
+        // REGLA: Solo listar los activos
+        String sql = "SELECT * FROM direccion_usuario WHERE es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
@@ -102,7 +95,8 @@ public class DireccionUsuarioDAOImpl implements DireccionUsuarioDAO {
 
     @Override
     public void remove(DireccionUsuario d) {
-        String sql = "DELETE FROM direccion_usuario WHERE direccion_id = ?";
+        // REGLA CUMPLIDA: Borrado lógico con es_activo = 0
+        String sql = "UPDATE direccion_usuario SET es_activo = 0 WHERE direccion_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -110,7 +104,7 @@ public class DireccionUsuarioDAOImpl implements DireccionUsuarioDAO {
             ps.setInt(1, d.getDireccionId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error al eliminar la dirección", e);
+            throw new RuntimeException("Error al eliminar (desactivar) la dirección", e);
         }
     }
 
@@ -121,14 +115,8 @@ public class DireccionUsuarioDAOImpl implements DireccionUsuarioDAO {
         d.setEsPrincipal(rs.getBoolean("principal"));
         d.setReferencia(rs.getString("referencia"));
 
-        // Creamos objetos "cascarón" solo con el ID
-        Usuario user = new Usuario();
-        user.setUsuarioId(rs.getInt("usuario_id"));
-        d.setUsuario(user);
-
-        Ubigeo ubi = new Ubigeo();
-        ubi.setUbigeoId(rs.getInt("ubigeo_id"));
-        d.setUbigeo(ubi);
+        Usuario user = new Usuario(); user.setUsuarioId(rs.getInt("usuario_id")); d.setUsuario(user);
+        Ubigeo ubi = new Ubigeo(); ubi.setUbigeoId(rs.getInt("ubigeo_id")); d.setUbigeo(ubi);
 
         return d;
     }

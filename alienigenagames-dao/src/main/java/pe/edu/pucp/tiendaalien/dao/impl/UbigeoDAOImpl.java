@@ -13,7 +13,8 @@ public class UbigeoDAOImpl implements UbigeoDAO {
     @Override
     public List<Ubigeo> listAll() {
         List<Ubigeo> lista = new ArrayList<>();
-        String sql = "SELECT ubigeo_id, codigo, departamento, provincia, distrito FROM ubigeo";
+        // REGLA: Solo listar los activos
+        String sql = "SELECT ubigeo_id, codigo, departamento, provincia, distrito FROM ubigeo WHERE es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
@@ -30,7 +31,8 @@ public class UbigeoDAOImpl implements UbigeoDAO {
 
     @Override
     public Ubigeo loadById(Integer id) {
-        String sql = "SELECT ubigeo_id, codigo, departamento, provincia, distrito FROM ubigeo WHERE ubigeo_id = ?";
+        // REGLA: Solo cargar si está activo
+        String sql = "SELECT ubigeo_id, codigo, departamento, provincia, distrito FROM ubigeo WHERE ubigeo_id = ? AND es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -49,7 +51,7 @@ public class UbigeoDAOImpl implements UbigeoDAO {
 
     @Override
     public Ubigeo save(Ubigeo u) {
-        String sql = "INSERT INTO ubigeo (codigo, departamento, provincia, distrito) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO ubigeo (codigo, departamento, provincia, distrito, es_activo) VALUES (?, ?, ?, ?, 1)";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -59,12 +61,10 @@ public class UbigeoDAOImpl implements UbigeoDAO {
             ps.setString(3, u.getProvincia());
             ps.setString(4, u.getDistrito());
 
-            int rows = ps.executeUpdate();
-            if (rows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        u.setUbigeoId(rs.getInt(1));
-                    }
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    u.setUbigeoId(rs.getInt(1));
                 }
             }
             return u;
@@ -95,7 +95,8 @@ public class UbigeoDAOImpl implements UbigeoDAO {
 
     @Override
     public void remove(Ubigeo u) {
-        String sql = "DELETE FROM ubigeo WHERE ubigeo_id = ?";
+        // REGLA CUMPLIDA: Borrado lógico con es_activo = 0
+        String sql = "UPDATE ubigeo SET es_activo = 0 WHERE ubigeo_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -103,11 +104,10 @@ public class UbigeoDAOImpl implements UbigeoDAO {
             ps.setInt(1, u.getUbigeoId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Error al eliminar Ubigeo", e);
+            throw new RuntimeException("Error al eliminar (desactivar) Ubigeo", e);
         }
     }
 
-    // Método auxiliar para evitar repetir el llenado del objeto
     private Ubigeo mapResultSet(ResultSet rs) throws SQLException {
         Ubigeo u = new Ubigeo();
         u.setUbigeoId(rs.getInt("ubigeo_id"));
