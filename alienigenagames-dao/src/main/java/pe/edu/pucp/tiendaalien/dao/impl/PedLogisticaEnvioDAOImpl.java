@@ -35,7 +35,7 @@ public class PedLogisticaEnvioDAOImpl implements PedLogisticaEnvioDAO {
     }
 
     @Override
-    public PedLogisticaEnvio load(Integer id) {
+    public PedLogisticaEnvio loadById(Integer id) {
         String sql = "SELECT * " +
                 "FROM ped_logistica p " +
                 "INNER JOIN ped_logistica_envio e ON p.ped_logistica_id = e.envio_id " +

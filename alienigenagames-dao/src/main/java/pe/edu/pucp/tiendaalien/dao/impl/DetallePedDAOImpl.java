@@ -38,7 +38,7 @@ public class DetallePedDAOImpl implements DetallePedDAO {
     }
 
     @Override
-    public DetallePed load(Integer id) {
+    public DetallePed loadById(Integer id) {
 
         String sql = """
             SELECT detalle_ped_id,nombre_congelado,precio_un_congelado,es_preventa_congelado,cantidad

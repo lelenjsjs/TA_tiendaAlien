@@ -12,16 +12,21 @@ import java.util.List;
 public class CategoriaDAOImpl implements CategoriaDAO {
 
     @Override
+    public Categoria loadByName(Integer id) {
+        return null;
+    }
+
+    @Override
     public List<Categoria> listAll() {
         List<Categoria> lista = new ArrayList<>();
-        String sql = "SELECT categoria_id, nombre, familia FROM categorias";
+        String sql = "SELECT categoria_id, nombre, familia FROM categorias WHERE es_activo=1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
-                lista.add(mapResultSet(rs));
+                lista.add(crearCategoria(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error al listar Categorías", e);
@@ -30,8 +35,8 @@ public class CategoriaDAOImpl implements CategoriaDAO {
     }
 
     @Override
-    public Categoria load(Integer id) {
-        String sql = "SELECT categoria_id, nombre, familia FROM categorias WHERE categoria_id = ?";
+    public Categoria loadById(Integer id) {
+        String sql = "SELECT categoria_id, nombre, familia,es_activo FROM categorias WHERE categoria_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -39,7 +44,7 @@ public class CategoriaDAOImpl implements CategoriaDAO {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSet(rs);
+                    return crearCategoria(rs);
                 }
             }
         } catch (SQLException e) {
@@ -92,24 +97,26 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 
     @Override
     public void remove(Categoria c) {
-        String sql = "DELETE FROM categorias WHERE categoria_id = ?";
+        String sql = "UPDATE categorias SET es_activo = 0 WHERE categoria_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, c.getCategoriaId());
+
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error al eliminar Categoría", e);
         }
     }
 
-    private Categoria mapResultSet(ResultSet rs) throws SQLException {
+    private Categoria crearCategoria(ResultSet rs) throws SQLException {
         Categoria c = new Categoria();
         c.setCategoriaId(rs.getInt("categoria_id"));
         c.setNombre(rs.getString("nombre"));
         // Convertimos el String de la BD de vuelta al Enum Familia
         String familiaStr = rs.getString("familia");
+        c.setEsActivo(rs.getBoolean("es_activo"));
         if (familiaStr != null) {
             c.setFamilia(Familia.valueOf(familiaStr));
         }

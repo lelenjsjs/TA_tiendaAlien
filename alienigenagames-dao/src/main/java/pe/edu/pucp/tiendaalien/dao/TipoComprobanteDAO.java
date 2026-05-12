@@ -6,7 +6,7 @@ import pe.edu.pucp.tiendaalien.model.facturacion.TipoComprobante;
 import java.util.List;
 
 public interface TipoComprobanteDAO extends BaseDAO<TipoComprobante, Integer> {
-    TipoComprobante load(Integer id);
+    TipoComprobante loadById(Integer id);
     TipoComprobante save(TipoComprobante t);
     TipoComprobante update(TipoComprobante t);
     void remove(TipoComprobante t);

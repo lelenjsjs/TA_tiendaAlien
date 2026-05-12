@@ -30,7 +30,7 @@ public class ColeccionDAOImpl implements ColeccionDAO {
     }
 
     @Override
-    public Coleccion load(Integer id) {
+    public Coleccion loadById(Integer id) {
         String sql = "SELECT coleccion_id, nombre, franquicia_id FROM colecciones WHERE coleccion_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();

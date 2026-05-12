@@ -30,7 +30,7 @@ public class PedidoDAOImpl implements PedidoDAO{
     }
 
     @Override
-    public Pedido load(Integer id) {
+    public Pedido loadById(Integer id) {
         String sql = "SELECT pedido_id, cod_pedido,cliente_email,cliente_cel,canal_venta, metodo_pago, " +
                 "estado_pago,subtotal,cargo_servicio,monto_adelanto,monto_total,pasarela_transaccion_id,fec_creacion,\n" +
                 "estado_pedido FROM pedido WHERE  id = ?";

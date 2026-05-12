@@ -14,7 +14,7 @@ public class ProductoDAOImpl implements ProductoDAO {
     private ResultSet rs;
 
     @Override
-    public Producto load(Integer integer) {
+    public Producto loadById(Integer integer) {
         Producto producto = null;
         try {
             con = DBManager.getInstance().getConnection();

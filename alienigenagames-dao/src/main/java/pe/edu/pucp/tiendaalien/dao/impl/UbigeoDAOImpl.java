@@ -29,7 +29,7 @@ public class UbigeoDAOImpl implements UbigeoDAO {
     }
 
     @Override
-    public Ubigeo load(Integer id) {
+    public Ubigeo loadById(Integer id) {
         String sql = "SELECT ubigeo_id, codigo, departamento, provincia, distrito FROM ubigeo WHERE ubigeo_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();

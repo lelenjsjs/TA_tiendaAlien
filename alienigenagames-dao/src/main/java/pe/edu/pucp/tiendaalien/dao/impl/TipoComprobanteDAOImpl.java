@@ -29,7 +29,7 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
     }
 
     @Override
-    public TipoComprobante load(Integer id) {
+    public TipoComprobante loadById(Integer id) {
         String sql = "SELECT tipo_comprobante_id, codigo_sunat, descripcion FROM tipo_comprobante WHERE tipo_comprobante_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();

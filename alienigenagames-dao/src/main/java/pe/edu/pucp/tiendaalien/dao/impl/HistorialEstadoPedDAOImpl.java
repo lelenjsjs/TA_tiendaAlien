@@ -37,7 +37,7 @@ public class HistorialEstadoPedDAOImpl implements HistorialEstadoPedDAO {
     }
 
     @Override
-    public HistorialEstadoPed load(Integer id) {
+    public HistorialEstadoPed loadById(Integer id) {
 
         String sql = """
             SELECT historial_id,estado,fec_actualizacion

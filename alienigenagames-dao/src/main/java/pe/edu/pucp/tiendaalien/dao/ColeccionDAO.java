@@ -5,7 +5,7 @@ import pe.edu.pucp.tiendaalien.model.catalogo.Coleccion;
 import java.util.List;
 
 public interface ColeccionDAO extends BaseDAO<Coleccion, Integer> {
-    Coleccion load(Integer id);
+    Coleccion loadById(Integer id);
     Coleccion save(Coleccion t);
     Coleccion update(Coleccion t);
     void remove(Coleccion t);

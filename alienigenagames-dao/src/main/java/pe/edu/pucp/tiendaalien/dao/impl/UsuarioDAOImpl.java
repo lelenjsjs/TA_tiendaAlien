@@ -31,7 +31,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     }
 
     @Override
-    public Usuario load(Integer id) {
+    public Usuario loadById(Integer id) {
         String sql = "SELECT usuario_id, nombres, apellidos, email, contra_hash, celular, rol, fec_creacion FROM usuario WHERE usuario_id = ?";
 
         try (Connection connection = DBManager.getInstance().getConnection();

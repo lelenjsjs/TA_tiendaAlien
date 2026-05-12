@@ -6,7 +6,7 @@ import pe.edu.pucp.tiendaalien.model.usuarios.Ubigeo;
 import java.util.List;
 
 public interface UbigeoDAO extends BaseDAO<Ubigeo, Integer> {
-    Ubigeo load(Integer id);
+    Ubigeo loadById(Integer id);
     Ubigeo save(Ubigeo t);
     Ubigeo update(Ubigeo t);
     void remove(Ubigeo t);

@@ -5,7 +5,7 @@ import pe.edu.pucp.tiendaalien.model.catalogo.Marca;
 import java.util.List;
 
 public interface MarcaDAO extends BaseDAO<Marca, Integer> {
-    Marca load(Integer id);
+    Marca loadById(Integer id);
     Marca save(Marca t);
     Marca update(Marca t);
     void remove(Marca t);

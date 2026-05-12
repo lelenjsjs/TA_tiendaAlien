@@ -29,7 +29,7 @@ public class FranquiciaDAOImpl implements FranquiciaDAO {
     }
 
     @Override
-    public Franquicia load(Integer id) {
+    public Franquicia loadById(Integer id) {
         String sql = "SELECT franquicia_id, nombre FROM franquicias WHERE franquicia_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();

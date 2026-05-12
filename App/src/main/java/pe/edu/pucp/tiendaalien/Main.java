@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import pe.edu.pucp.tiendaalien.bl.BusinessLogicException;
+import pe.edu.pucp.tiendaalien.bl.IAgenciaEnvioBL;
+import pe.edu.pucp.tiendaalien.bl.impl.AgenciaEnvioBLImpl;
 import pe.edu.pucp.tiendaalien.dao.UbigeoDAO;
 import pe.edu.pucp.tiendaalien.dao.impl.UbigeoDAOImpl;
 import pe.edu.pucp.tiendaalien.model.usuarios.Ubigeo;
@@ -31,153 +34,74 @@ import java.util.List;
 // Cuando corra las pruebas se solicita colocar diferentes IDs porque sino da error de duplicado
 
 public class Main {
-    private static UbigeoDAO ubiDAO;
 
-    public static void main(String[] args) {
-//        // PRUEBA 1: UBIGEO
-//        System.out.println("\n>> [TEST UBIGEO]");
-//        UbigeoDAO ubiDAO = new UbigeoDAOImpl();
-//
-//        // A. INSERTAR (save)
-//        Ubigeo nuevoUbi = new Ubigeo();
-//        nuevoUbi.setCodigo("157103");
-//        nuevoUbi.setDepartamento("Lima");
-//        nuevoUbi.setProvincia("Lima");
-//        nuevoUbi.setDistrito("Lima Cercado");
-//        ubiDAO.save(nuevoUbi);
-//        System.out.println("1. INSERTAR: Éxito. ID generado: " + nuevoUbi.getUbigeoId());
-//
-//        // B. OBTENER POR ID (load)
-//        Ubigeo ubiCargado = ubiDAO.load(nuevoUbi.getUbigeoId());
-//        System.out.println("2. OBTENER POR ID: Cargado: " + ubiCargado.getDistrito());
-//
-//        // C. MODIFICAR (update)
-//        ubiCargado.setDistrito("Lima Cercado - MODIFICADO");
-//        ubiDAO.update(ubiCargado);
-//        System.out.println("3. MODIFICAR: Distrito cambiado a: " + ubiDAO.load(nuevoUbi.getUbigeoId()).getDistrito());
-//
-//        // D. LISTAR (listAll)
-//        List<Ubigeo> listaUbi = ubiDAO.listAll();
-//        System.out.println("4. LISTAR: Total de registros encontrados: " + listaUbi.size());
-//
-//        // E. ELIMINAR (remove)
-//        UbigeoDAO dao = new UbigeoDAOImpl();
-//        Ubigeo ubiAEliminar = new Ubigeo();
-//
-//        ubiAEliminar.setUbigeoId(2); // Pon aquí el número que quieres borrar
-//        dao.remove(ubiAEliminar);
-//
-//        System.out.println("Registro borrado con éxito desde Java.");
-//
-//        // ===============================================================================
-//        // PRUEBA 2: AGENCIA DE ENVÍO
-//        System.out.println("\n>> [TEST AGENCIA DE ENVÍO]");
-//        AgenciaEnvioDAO ageDAO = new AgenciaEnvioDAOImpl();
-//
-//        // A. INSERTAR (save)
-//        AgenciaEnvio nuevaAge = new AgenciaEnvio();
-//        nuevaAge.setNombre("Olva");
-//        nuevaAge.setUrlTracking("https://track.olva.com/");
-//        ageDAO.save(nuevaAge);
-//        System.out.println("1. INSERTAR: Éxito. ID generado: " + nuevaAge.getAgenciaId());
-//
-//        // B. OBTENER POR ID (load)
-//        AgenciaEnvio ageCargada = ageDAO.load(nuevaAge.getAgenciaId());
-//        System.out.println("2. OBTENER POR ID: Agencia cargada: " + ageCargada.getNombre());
-//
-//        // C. MODIFICAR (update)
-//        ageCargada.setNombre("Olva express");
-//        ageDAO.update(ageCargada);
-//        System.out.println("3. MODIFICAR: Nombre actualizado a: " + ageDAO.load(nuevaAge.getAgenciaId()).getNombre());
-//
-//        // D. LISTAR (listAll)
-//        List<AgenciaEnvio> listaAge = ageDAO.listAll();
-//        System.out.println("4. LISTAR: Total de agencias en BD: " + listaAge.size());
-//
-//        // E. ELIMINAR (remove)
-//        AgenciaEnvioDAO ageDAO2 = new AgenciaEnvioDAOImpl();
-//        AgenciaEnvio ageABorrar = new AgenciaEnvio();
-//
-//        ageABorrar.setAgenciaId(1);
-//        ageDAO2.remove(ageABorrar);
-//
-//        System.out.println("5. ELIMINAR: Agencia eliminada correctamente de la base de datos.");
-//
-//        // ===============================================================================
-//
-//        // PRUEBA 3: USUARIO
-//        System.out.println("\n>> [TEST USUARIO]");
-//        UsuarioDAO userDAO = new UsuarioDAOImpl();
-//
-//        // A. INSERTAR (save)
-//        Usuario nuevoUser = new Usuario();
-//        nuevoUser.setNombres("Jennie");
-//        nuevoUser.setApellidos("Kim");
-//        nuevoUser.setEmail("jennie_ki88m@pucp.edu.pe");
-//        nuevoUser.setContraHash("hash_seguro_123");
-//        nuevoUser.setCelular("987654321");
-//        nuevoUser.setRol(Rol.CLIENTE);
-//        nuevoUser.setFechaCreacion(new java.util.Date());
-//
-//        userDAO.save(nuevoUser);
-//        System.out.println("1. INSERTAR: Usuario creado con ID: " + nuevoUser.getUsuarioId());
-//
-//        // B. OBTENER POR ID (load)
-//        Usuario userCargado = userDAO.load(nuevoUser.getUsuarioId());
-//        System.out.println("2. OBTENER POR ID: Cargado: " + userCargado.getNombres() + " " + userCargado.getApellidos());
-//
-//
-//        // C. MODIFICAR (update)
-//        userCargado.setApellidos("Perez (Editado)");
-//        userDAO.update(userCargado);
-//        System.out.println("3. MODIFICAR: Apellido actualizado a: " + userDAO.load(nuevoUser.getUsuarioId()).getApellidos());
-//
-//
-//        // D. LISTAR (listAll)
-//        List<Usuario> listaUsers = userDAO.listAll();
-//        System.out.println("4. LISTAR: Total de usuarios en el sistema: " + listaUsers.size());
-//
-//        // E. ELIMINAR
-//        UsuarioDAO daoU = new UsuarioDAOImpl();
-//        Usuario userAEliminar = new Usuario();
-//        userAEliminar.setUsuarioId(1);
-//        daoU.remove(userAEliminar);
-//
-//        System.out.println("5. ELIMINAR: Usuario eliminado correctamente.");
+    public static void main(String[] args) throws BusinessLogicException {
+        /* ////////////////////////// AGENCIA DE ENVIO /////////////////////////////// */
+        IAgenciaEnvioBL agenciaEnvioBL = new AgenciaEnvioBLImpl();
 
-        // ===============================================================================
-        // PRUEBA 4: MARCA
-                System.out.println("\n>> [TEST MARCA]");
-                MarcaDAO marcaDAO = new MarcaDAOImpl();
+        /* 1. Registrar una agencia de envio: CREATE =====================================================*/
+        String nombreAgencia = "Shamurr";
+        String url = "https:/www.shamurr.com";
+        AgenciaEnvio agenciaRecibida = new AgenciaEnvio(nombreAgencia,url);
+        agenciaRecibida = agenciaEnvioBL.registrarAgencia(agenciaRecibida);
 
-        // A. INSERTAR (save)
-                Marca nuevaMarca = new Marca();
-                nuevaMarca.setNombre("Bandai");
-                marcaDAO.save(nuevaMarca);
-                System.out.println("1. INSERTAR: Éxito. ID generado: " + nuevaMarca.getMarcaId());
+        System.out.println(agenciaRecibida);
 
-        // B. OBTENER POR ID (load)
-                Marca marcaCargada = marcaDAO.load(nuevaMarca.getMarcaId());
-                System.out.println("2. OBTENER POR ID: Cargada: " + marcaCargada.getNombre());
+        /* 2. Buscar agencia por ID: READ ================================================================*/
+        int idDeLaAgencia = 2;// !!!!!!!!!!!!!!!!!
+        AgenciaEnvio agenciaEnvioPorId = agenciaEnvioBL.cargarAgenciaPorId(idDeLaAgencia);
+        System.out.println("Buscando Agencia " + "con ID = ...."+idDeLaAgencia);
+        if(agenciaEnvioPorId == null){
+            System.out.println("Agencia no encontrada");
+        }
+        else {
+            System.out.println(agenciaEnvioPorId);
+        }
 
-        // C. MODIFICAR (update)
-                marcaCargada.setNombre("Bandai Namco");
-                marcaDAO.update(marcaCargada);
-                System.out.println("3. MODIFICAR: Nombre actualizado a: " + marcaDAO.load(nuevaMarca.getMarcaId()).getNombre());
+        /* 3. Actualizar una agencia de envio: UPDATE =====================================================*/
+        String nombreOriginalAgencia = "Shalom";// !!!!!!!!!!!!!
+        AgenciaEnvio agenciaACambiar = agenciaEnvioBL.cargarAgenciaPorNombre(nombreOriginalAgencia);
+        System.out.println(agenciaACambiar);
 
-        // D. LISTAR (listAll)
-                List<Marca> listaMarcas = marcaDAO.listAll();
-                System.out.println("4. LISTAR: Total de marcas registradas: " + listaMarcas.size());
+        String nuevoUrl = "https://shalomurl.pe/rastreo"; // !!!!!!!!!!!!
+        agenciaACambiar.setUrlTracking(nuevoUrl);// !!!!!!!!!!!!!
 
-        // E. ELIMINAR (remove)
-        // Creamos una instancia para borrar el registro que acabamos de usar en el test
-                MarcaDAO marcaDAO2 = new MarcaDAOImpl();
-                Marca marcaABorrar = new Marca();
+        agenciaACambiar = agenciaEnvioBL.modificarAgencia(agenciaACambiar);
+        System.out.println(agenciaACambiar);
 
-                marcaABorrar.setMarcaId(nuevaMarca.getMarcaId());
-                marcaDAO2.remove(marcaABorrar);
+        /* 4. Desactivar la agencia de envio: "DELETE" ==================================================== */
+        String nombreAgenciaAEliminar = "Shalom";// !!!!!!!!!!!!!!!!
+        AgenciaEnvio agenciaAEliminar = agenciaEnvioBL.cargarAgenciaPorNombre(nombreAgenciaAEliminar);
 
-                System.out.println("5. ELIMINAR: Marca eliminada físicamente de la base de datos.");
-        // ===============================================================================
+        System.out.println("Eliminare : " + nombreAgenciaAEliminar);
+        agenciaEnvioBL.eliminarAgencia(agenciaAEliminar);
+
+        /* 5. Listar todas ================================================================================ */
+        List<AgenciaEnvio> listaAgenciasEnvio = agenciaEnvioBL.listarAgenciasDeEnvio();
+
+        if(listaAgenciasEnvio.isEmpty()){
+            System.out.println("No hay agencias de envio registradas");
+        }
+        else {
+            System.out.println("AGENCIAS DE ENVIO");
+            for (AgenciaEnvio agenciaEnvio : listaAgenciasEnvio) {
+                System.out.println(agenciaEnvio);
+            }
+        }
+
+        /* 6. Buscar agencia por nombre ================================================================== */
+        String nombreAgenciaABuscar = "Olva Courier";
+        AgenciaEnvio agenciaEnvioPorNom = agenciaEnvioBL.cargarAgenciaPorNombre(nombreAgenciaABuscar);
+        System.out.println("Buscando Agencia " + nombreAgenciaABuscar);
+        if(agenciaEnvioPorNom == null){
+            System.out.println("Agencia no encontrada");
+        }
+        else {
+            System.out.println(agenciaEnvioPorNom);
+        }
+
+
+
+
     }
 }

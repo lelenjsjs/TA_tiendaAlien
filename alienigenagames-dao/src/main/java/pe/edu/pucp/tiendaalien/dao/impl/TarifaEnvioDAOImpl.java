@@ -43,7 +43,7 @@ public class TarifaEnvioDAOImpl implements TarifaEnvioDAO {
     }
 
     @Override
-    public TarifaEnvio load(Integer id) {
+    public TarifaEnvio loadById(Integer id) {
         String sql = "SELECT * FROM tarifa_envio WHERE tarifa_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();

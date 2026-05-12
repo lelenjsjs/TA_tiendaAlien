@@ -5,9 +5,6 @@ import pe.edu.pucp.tiendaalien.model.catalogo.Categoria;
 import java.util.List;
 
 public interface CategoriaDAO extends BaseDAO<Categoria, Integer> {
-    Categoria load(Integer id);
-    Categoria save(Categoria t);
-    Categoria update(Categoria t);
-    void remove(Categoria t);
+    Categoria loadByName(Integer id);
     List<Categoria> listAll();
 }

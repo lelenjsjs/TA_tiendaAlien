@@ -5,14 +5,15 @@ public class AgenciaEnvio {
     private int agenciaId;
     private String nombre;
     private String urlTracking; // Nullable
+    private boolean esActivo; // Para manejar delete logico
 
     public AgenciaEnvio() {
     }
 
-    public AgenciaEnvio(int agenciaId, String nombre, String urlTracking) {
-        this.agenciaId = agenciaId;
+    public AgenciaEnvio(String nombre, String urlTracking) {
         this.nombre = nombre;
         this.urlTracking = urlTracking;
+        this.esActivo = true;
     }
 
     public void setAgenciaId(int agenciaId) {
@@ -36,4 +37,15 @@ public class AgenciaEnvio {
         return urlTracking;
     }
 
+    public boolean getEsActivo() {
+        return esActivo;
+    }
+
+    public void setEsActivo(boolean esActivo) {
+        this.esActivo = esActivo;
+    }
+
+    public String toString() {
+        return "ID = " + agenciaId + ", NOMBRE = " + nombre + ", URLTracking = " + urlTracking + "\n";
+    }
 }

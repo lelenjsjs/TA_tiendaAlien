@@ -43,7 +43,7 @@ public class DireccionUsuarioDAOImpl implements DireccionUsuarioDAO {
     }
 
     @Override
-    public DireccionUsuario load(Integer id) {
+    public DireccionUsuario loadById(Integer id) {
         String sql = "SELECT direccion_id, usuario_id, ubigeo_id, direccion, principal, referencia FROM direccion_usuario WHERE direccion_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();

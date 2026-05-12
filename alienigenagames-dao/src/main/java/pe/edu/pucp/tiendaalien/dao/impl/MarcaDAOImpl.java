@@ -29,7 +29,7 @@ public class MarcaDAOImpl implements MarcaDAO {
     }
 
     @Override
-    public Marca load(Integer id) {
+    public Marca loadById(Integer id) {
         String sql = "SELECT marca_id, nombre FROM marca WHERE marca_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();

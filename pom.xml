@@ -13,6 +13,7 @@
         <module>alienigenagames-dao</module>
         <module>alienigenagames-dbmanager</module>
         <module>alienigenagames-model</module>
+        <module>alienigenagames-bl</module>
     </modules>
 
     <properties>

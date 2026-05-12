@@ -6,7 +6,7 @@ import pe.edu.pucp.tiendaalien.model.ventas.HistorialEstadoPed;
 import java.util.List;
 
 public interface HistorialEstadoPedDAO extends BaseDAO<HistorialEstadoPed,Integer> {
-    HistorialEstadoPed load (Integer id);
+    HistorialEstadoPed loadById(Integer id);
     HistorialEstadoPed save (HistorialEstadoPed t);
     HistorialEstadoPed update (HistorialEstadoPed t);
     void remove (HistorialEstadoPed t);

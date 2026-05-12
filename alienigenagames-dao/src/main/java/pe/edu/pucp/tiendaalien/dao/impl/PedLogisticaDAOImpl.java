@@ -38,7 +38,7 @@ public class PedLogisticaDAOImpl implements PedLogisticaDAO {
     }
 
     @Override
-    public PedLogistica load(Integer id) {
+    public PedLogistica loadById(Integer id) {
 
         String sql = """
             SELECT ped_logistica_id,estado_logistica,receptor_nombre,receptor_tipo_doc,receptor_nro_doc,receptor_cel

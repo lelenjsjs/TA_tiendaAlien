@@ -7,7 +7,7 @@ import java.util.List;
 
 
 public interface DetallePedDAO extends BaseDAO<DetallePed,Integer> {
-    DetallePed load(Integer id);
+    DetallePed loadById(Integer id);
     DetallePed save(DetallePed t);
     DetallePed update(DetallePed t);
     void remove(DetallePed t);

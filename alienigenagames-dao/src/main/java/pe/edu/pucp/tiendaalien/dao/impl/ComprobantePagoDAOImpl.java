@@ -34,7 +34,7 @@ public class ComprobantePagoDAOImpl implements ComprobantePagoDAO {
     }
 
     @Override
-    public ComprobantePago load(Integer id) {
+    public ComprobantePago loadById(Integer id) {
         String sql = "SELECT * FROM comprobante_pago WHERE comprobante_id = ?";
         try(Connection connection = DBManager.getInstance().getConnection();
             PreparedStatement pstmt = connection.prepareStatement(sql)) {
