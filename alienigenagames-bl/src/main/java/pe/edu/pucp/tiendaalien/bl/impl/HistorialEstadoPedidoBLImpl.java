@@ -1,87 +1,91 @@
 package pe.edu.pucp.tiendaalien.bl.impl;
 
 import pe.edu.pucp.tiendaalien.bl.BusinessLogicException;
-import pe.edu.pucp.tiendaalien.bl.IHistorialEstadoPedidoBL;
-import pe.edu.pucp.tiendaalien.dao.HistorialEstadoPedidoDAO;
-import pe.edu.pucp.tiendaalien.dao.impl.HistorialEstadoPedidoDAOImpl;
-import pe.edu.pucp.tiendaalien.model.pedido.HistorialEstadoPedido;
+import pe.edu.pucp.tiendaalien.bl.IDetallePedidoBL;
+import pe.edu.pucp.tiendaalien.dao.DetallePedidoDAO;
+import pe.edu.pucp.tiendaalien.dao.impl.DetallePedidoDAOImpl;
+import pe.edu.pucp.tiendaalien.model.ventas.DetallePed;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistorialEstadoPedidoBLImpl implements IHistorialEstadoPedidoBL {
+public class DetallePedidoBLImpl implements IDetallePedidoBL {
 
-    private HistorialEstadoPedidoDAO historialDAO = new HistorialEstadoPedidoDAOImpl();
+    private DetallePedidoDAO detallePedidoDAO = new DetallePedidoDAOImpl();
 
     @Override
-    public List<HistorialEstadoPedido> listarHistorialPorPedido(Integer idPedido) throws BusinessLogicException {
+    public List<DetallePed> listarDetallesPorPedido(Integer idPedido) throws BusinessLogicException {
         if (idPedido == null || idPedido <= 0) {
-            throw new BusinessLogicException("Se requiere el ID del pedido para listar su historial.");
+            throw new BusinessLogicException("Se requiere un ID de pedido válido para listar sus detalles.");
         }
-        // Tu DAO debe tener un método listByPedido (igual que hicimos con direcciones de usuario)
-        List<HistorialEstadoPedido> lista = historialDAO.listByPedido(idPedido);
+        // Se corrigió DetallePedido a DetallePed
+        List<DetallePed> lista = detallePedidoDAO.listByPedido(idPedido);
         return (lista != null) ? lista : new ArrayList<>();
     }
 
     @Override
-    public HistorialEstadoPedido cargarHistorialPorId(Integer id) throws BusinessLogicException {
+    public DetallePed cargarDetallePorId(Integer id) throws BusinessLogicException {
         if (id == null || id <= 0) {
-            throw new BusinessLogicException("El ID del registro de historial no es válido.");
+            throw new BusinessLogicException("El ID del detalle no es válido.");
         }
-        HistorialEstadoPedido historial = historialDAO.load(id);
-        return (historial != null) ? historial : new HistorialEstadoPedido();
+        // Se corrigió DetallePedido a DetallePed
+        DetallePed detalle = detallePedidoDAO.load(id);
+        return (detalle != null) ? detalle : new DetallePed();
     }
 
     @Override
-    public HistorialEstadoPedido registrarHistorial(HistorialEstadoPedido historial) throws BusinessLogicException {
+    public DetallePed registrarDetalle(DetallePed detalle) throws BusinessLogicException {
         // false = Nuevo registro
-        validar(historial, false);
-        return historialDAO.save(historial);
+        validar(detalle, false);
+        return detallePedidoDAO.save(detalle);
     }
 
     @Override
-    public HistorialEstadoPedido modificarHistorial(HistorialEstadoPedido historial) throws BusinessLogicException {
+    public DetallePed modificarDetalle(DetallePed detalle) throws BusinessLogicException {
         // true = Edición
-        validar(historial, true);
-        return historialDAO.update(historial);
+        validar(detalle, true);
+        return detallePedidoDAO.update(detalle);
     }
 
     @Override
-    public void eliminarHistorial(HistorialEstadoPedido historial) throws BusinessLogicException {
-        if (historial == null || historial.getHistorialId() == null || historial.getHistorialId() <= 0) {
-            throw new BusinessLogicException("Debe especificar un registro de historial válido para eliminar.");
+    public void eliminarDetalle(DetallePed detalle) throws BusinessLogicException {
+        if (detalle == null || detalle.getDetallePedId() == null || detalle.getDetallePedId() <= 0) {
+            throw new BusinessLogicException("Debe especificar un detalle válido para eliminar.");
         }
-        historialDAO.remove(historial);
+        detallePedidoDAO.remove(detalle);
     }
 
     // =========================================================================
     // MÓDULO DE VALIDACIONES (REGLAS DE NEGOCIO)
     // =========================================================================
-    private void validar(HistorialEstadoPedido h, boolean esModificacion) throws BusinessLogicException {
-        if (h == null) {
-            throw new BusinessLogicException("El registro del historial no puede ser nulo.");
+    // Se corrigió el parámetro de DetallePedido a DetallePed
+    private void validar(DetallePed d, boolean esModificacion) throws BusinessLogicException {
+        if (d == null) {
+            throw new BusinessLogicException("El detalle del pedido no puede ser nulo.");
         }
 
         // 1. Validar ID en caso de modificación
-        if (esModificacion && (h.getHistorialId() == null || h.getHistorialId() <= 0)) {
-            throw new BusinessLogicException("El ID del historial es obligatorio para modificarlo.");
+        if (esModificacion && (d.getDetallePedId() == null || d.getDetallePedId() <= 0)) {
+            throw new BusinessLogicException("El ID del detalle es obligatorio para modificar.");
         }
 
-        // 2. Validar Relaciones (Llave Foránea al Pedido)
-        if (h.getPedido() == null || h.getPedido().getPedidoId() == null || h.getPedido().getPedidoId() <= 0) {
-            throw new BusinessLogicException("El historial debe estar asociado obligatoriamente a un Pedido válido.");
+        // 2. Validar Relaciones (Foreign Keys)
+        if (d.getPedido() == null || d.getPedido().getPedidoId() == null || d.getPedido().getPedidoId() <= 0) {
+            throw new BusinessLogicException("El detalle debe estar asociado a un Pedido válido.");
         }
 
-        // 3. Validar el Estado (VARCHAR 50 NOT NULL)
-        if (h.getEstado() == null || h.getEstado().trim().isEmpty()) {
-            throw new BusinessLogicException("El estado del pedido no puede estar vacío.");
+        if (d.getProducto() == null || d.getProducto().getProductoId() == null || d.getProducto().getProductoId() <= 0) {
+            throw new BusinessLogicException("El detalle debe estar asociado a un Producto válido.");
         }
 
-        if (h.getEstado().length() > 50) {
-            throw new BusinessLogicException("El texto del estado no puede exceder los 50 caracteres.");
+        // 3. Validar Cantidad (Regla: Siempre debe ser mayor a 0)
+        if (d.getCantidad() == null || d.getCantidad() <= 0) {
+            throw new BusinessLogicException("La cantidad del producto debe ser mayor a cero.");
         }
 
-        // Nota: fec_actualizacion no la validamos aquí porque tu SQL tiene un DEFAULT CURRENT_TIMESTAMP,
-        // por lo que la base de datos se encarga de ponerle la fecha exacta automáticamente si no se envía.
+        // 4. Validar Precio Congelado (Regla: No puede ser negativo)
+        if (d.getPrecioUnitarioCongelado() == null || d.getPrecioUnitarioCongelado() < 0) {
+            throw new BusinessLogicException("El precio unitario no puede ser negativo.");
+        }
     }
 }
