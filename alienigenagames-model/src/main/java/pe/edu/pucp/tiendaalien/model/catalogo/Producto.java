@@ -27,31 +27,33 @@ public class Producto {
     private Categoria categoria;
     private List<ImagenProducto> imagenes;
 
-    public Producto(){
-        this.imagenes=new ArrayList<>();
+    public Producto() {
+        this.imagenes = new ArrayList<>();
+        this.siActivo = true;
     }
 
     public Producto(int productoId, String nombre, String descripcion, String sku, int stock,
                     boolean siActivo, double precio, double precioComparacion, String idioma, String tamano,
                     Date fecCreacion, Date fecUltimaModificacion, Marca marca, Franquicia franquicia,
-                    Coleccion coleccion, Categoria categoria){
-        this.productoId=productoId;
-        this.nombre=nombre;
-        this.descripcion=descripcion;
-        this.sku=sku;
-        this.stock=stock;
-        this.siActivo=siActivo;
-        this.precio=precio;
-        this.precioComparacion=precioComparacion;
-        this.idioma=idioma;
-        this.tamano=tamano;
-        this.fecCreacion=fecCreacion;
-        this.fecUltimaModificacion=fecUltimaModificacion;
-        this.marca=marca;
-        this.franquicia=franquicia;
-        this.coleccion=coleccion;
-        this.categoria=categoria;
-        this.imagenes=new ArrayList<>();
+                    Coleccion coleccion, Categoria categoria) {
+        this.productoId = productoId;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.sku = sku;
+        this.stock = stock;
+        this.siActivo = siActivo;
+        this.precio = precio;
+        this.precioComparacion = precioComparacion;
+        this.idioma = idioma;
+        this.tamano = tamano;
+        this.fecCreacion = fecCreacion;
+        this.fecUltimaModificacion = fecUltimaModificacion;
+        this.marca = marca;
+        this.franquicia = franquicia;
+        this.coleccion = coleccion;
+        this.categoria = categoria;
+        this.imagenes = new ArrayList<>();
+        this.siActivo = true;
     }
 
     //SETTERS Y GETTERS
@@ -136,7 +138,7 @@ public class Producto {
         this.tamano = tamano;
     }
 
-    public boolean isEsPreventa() {
+    public boolean getEsPreventa() {
         return esPreventa;
     }
 
@@ -206,6 +208,12 @@ public class Producto {
 
     public void setImagenes(List<ImagenProducto> imagenes) {
         this.imagenes = imagenes;
+    }
+
+
+    @Override
+    public String toString() {
+        return "ID = " + productoId + ", Nombre = " + nombre + "/n";
     }
 
 }

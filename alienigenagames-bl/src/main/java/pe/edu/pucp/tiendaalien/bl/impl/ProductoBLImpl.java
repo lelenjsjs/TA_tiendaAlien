@@ -5,6 +5,9 @@ import pe.edu.pucp.tiendaalien.dao.ProductoDAO;
 import pe.edu.pucp.tiendaalien.dao.impl.ProductoDAOImpl;
 import pe.edu.pucp.tiendaalien.model.catalogo.Producto;
 
+import java.sql.SQLException;
+import java.util.List;
+
 public class ProductoBLImpl implements IProductoBL {
     ProductoDAO productoDAO = new ProductoDAOImpl();
     @Override
@@ -25,5 +28,10 @@ public class ProductoBLImpl implements IProductoBL {
     @Override
     public void eliminarProducto(Producto producto) {
         productoDAO.remove(producto);
+    }
+
+    @Override
+    public List<Producto> listarProductos() throws SQLException {
+        return productoDAO.listAll();
     }
 }
