@@ -1,114 +1,91 @@
-package pe.edu.pucp.tiendaalien.dao.impl;
+package pe.edu.pucp.tiendaalien.bl.impl;
 
-import pe.edu.pucp.tiendaalien.DBManager;
-import pe.edu.pucp.tiendaalien.dao.HistorialEstadoPedDAO;
-import pe.edu.pucp.tiendaalien.model.ventas.HistorialEstadoPed;
-import pe.edu.pucp.tiendaalien.model.ventas.Pedido;
+import pe.edu.pucp.tiendaalien.bl.BusinessLogicException;
+import pe.edu.pucp.tiendaalien.bl.IDetallePedidoBL;
+import pe.edu.pucp.tiendaalien.dao.DetallePedidoDAO;
+import pe.edu.pucp.tiendaalien.dao.impl.DetallePedidoDAOImpl;
+import pe.edu.pucp.tiendaalien.model.ventas.DetallePed;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistorialEstadoPedDAOImpl implements HistorialEstadoPedDAO {
+public class DetallePedidoBLImpl implements IDetallePedidoBL {
+
+    private DetallePedidoDAO detallePedidoDAO = new DetallePedidoDAOImpl();
 
     @Override
-    public List<HistorialEstadoPed> listAll() {
-        List<HistorialEstadoPed> lista = new ArrayList<>();
-        // REGLA: Filtramos por es_activo = 1 y nombre correcto 'historial_estado_ped'
-        String sql = "SELECT historial_id, pedido_id, estado, fec_actualizacion FROM historial_estado_ped WHERE es_activo = 1";
-
-        try (Connection con = DBManager.getInstance().getConnection();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
-                lista.add(mapearHistorial(rs));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al listar historial", e);
+    public List<DetallePed> listarDetallesPorPedido(Integer idPedido) throws BusinessLogicException {
+        if (idPedido == null || idPedido <= 0) {
+            throw new BusinessLogicException("Se requiere un ID de pedido válido para listar sus detalles.");
         }
-        return lista;
+        // Se corrigió DetallePedido a DetallePed
+        List<DetallePed> lista = detallePedidoDAO.listByPedido(idPedido);
+        return (lista != null) ? lista : new ArrayList<>();
     }
 
     @Override
-    public HistorialEstadoPed loadById(Integer id) {
-        String sql = "SELECT historial_id, pedido_id, estado, fec_actualizacion FROM historial_estado_ped " +
-                     "WHERE historial_id = ? AND es_activo = 1";
-
-        try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return mapearHistorial(rs);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al cargar historial", e);
+    public DetallePed cargarDetallePorId(Integer id) throws BusinessLogicException {
+        if (id == null || id <= 0) {
+            throw new BusinessLogicException("El ID del detalle no es válido.");
         }
-        return null;
+        // Se corrigió DetallePedido a DetallePed
+        DetallePed detalle = detallePedidoDAO.load(id);
+        return (detalle != null) ? detalle : new DetallePed();
     }
 
     @Override
-    public HistorialEstadoPed save(HistorialEstadoPed h) {
-        String sql = "INSERT INTO historial_estado_ped (pedido_id, estado, fec_actualizacion, es_activo) VALUES (?, ?, ?, 1)";
-
-        try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            ps.setInt(1, h.getPedido().getPedidoId());
-            ps.setString(2, h.getEstado());
-            ps.setTimestamp(3, new Timestamp(h.getFecActualizacion().getTime()));
-
-            ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) h.setHistorialId(rs.getInt(1));
-            }
-            return h;
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al guardar historial", e);
-        }
+    public DetallePed registrarDetalle(DetallePed detalle) throws BusinessLogicException {
+        // false = Nuevo registro
+        validar(detalle, false);
+        return detallePedidoDAO.save(detalle);
     }
 
     @Override
-    public HistorialEstadoPed update(HistorialEstadoPed h) {
-        String sql = "UPDATE historial_estado_ped SET pedido_id = ?, estado = ?, fec_actualizacion = ? WHERE historial_id = ?";
-
-        try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, h.getPedido().getPedidoId());
-            ps.setString(2, h.getEstado());
-            ps.setTimestamp(3, new Timestamp(h.getFecActualizacion().getTime()));
-            ps.setInt(4, h.getHistorialId());
-
-            ps.executeUpdate();
-            return h;
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al actualizar historial", e);
-        }
+    public DetallePed modificarDetalle(DetallePed detalle) throws BusinessLogicException {
+        // true = Edición
+        validar(detalle, true);
+        return detallePedidoDAO.update(detalle);
     }
 
     @Override
-    public void remove(HistorialEstadoPed h) {
-        // REGLA: Borrado lógico con es_activo = 0
-        String sql = "UPDATE historial_estado_ped SET es_activo = 0 WHERE historial_id = ?";
-        try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, h.getHistorialId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al eliminar historial", e);
+    public void eliminarDetalle(DetallePed detalle) throws BusinessLogicException {
+        if (detalle == null || detalle.getDetallePedId() == null || detalle.getDetallePedId() <= 0) {
+            throw new BusinessLogicException("Debe especificar un detalle válido para eliminar.");
         }
+        detallePedidoDAO.remove(detalle);
     }
 
-    private HistorialEstadoPed mapearHistorial(ResultSet rs) throws SQLException {
-        HistorialEstadoPed h = new HistorialEstadoPed();
-        h.setHistorialId(rs.getInt("historial_id"));
-        h.setEstado(rs.getString("estado"));
-        h.setFecActualizacion(rs.getTimestamp("fec_actualizacion"));
+    // =========================================================================
+    // MÓDULO DE VALIDACIONES (REGLAS DE NEGOCIO)
+    // =========================================================================
+    // Se corrigió el parámetro de DetallePedido a DetallePed
+    private void validar(DetallePed d, boolean esModificacion) throws BusinessLogicException {
+        if (d == null) {
+            throw new BusinessLogicException("El detalle del pedido no puede ser nulo.");
+        }
 
-        Pedido p = new Pedido();
-        p.setPedidoId(rs.getInt("pedido_id"));
-        h.setPedido(p);
+        // 1. Validar ID en caso de modificación
+        if (esModificacion && (d.getDetallePedId() == null || d.getDetallePedId() <= 0)) {
+            throw new BusinessLogicException("El ID del detalle es obligatorio para modificar.");
+        }
 
-        return h;
+        // 2. Validar Relaciones (Foreign Keys)
+        if (d.getPedido() == null || d.getPedido().getPedidoId() == null || d.getPedido().getPedidoId() <= 0) {
+            throw new BusinessLogicException("El detalle debe estar asociado a un Pedido válido.");
+        }
+
+        if (d.getProducto() == null || d.getProducto().getProductoId() == null || d.getProducto().getProductoId() <= 0) {
+            throw new BusinessLogicException("El detalle debe estar asociado a un Producto válido.");
+        }
+
+        // 3. Validar Cantidad (Regla: Siempre debe ser mayor a 0)
+        if (d.getCantidad() == null || d.getCantidad() <= 0) {
+            throw new BusinessLogicException("La cantidad del producto debe ser mayor a cero.");
+        }
+
+        // 4. Validar Precio Congelado (Regla: No puede ser negativo)
+        if (d.getPrecioUnitarioCongelado() == null || d.getPrecioUnitarioCongelado() < 0) {
+            throw new BusinessLogicException("El precio unitario no puede ser negativo.");
+        }
     }
 }
