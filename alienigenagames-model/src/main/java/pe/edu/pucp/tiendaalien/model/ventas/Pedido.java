@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class Pedido {
 
-    private Integer pedidoId;
+    private Integer idPedido;
     private String codPedido;
     private String clienteEmail;
     private String clienteCel;
@@ -41,11 +41,11 @@ public class Pedido {
 
 
     // Getters y Setters
-    public Integer getPedidoId() {
-        return pedidoId;
+    public Integer getIdPedido() {
+        return idPedido;
     }
-    public void setPedidoId(Integer pedidoId) {
-        this.pedidoId = pedidoId;
+    public void setIdPedido(Integer pedidoId) {
+        this.idPedido = pedidoId;
     }
 
     public String getCodPedido() {

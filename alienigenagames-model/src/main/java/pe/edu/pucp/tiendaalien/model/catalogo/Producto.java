@@ -11,7 +11,6 @@ public class Producto {
     private String descripcion;
     private String sku;
     private int stock;
-    private boolean siActivo;
     private double precio;
     private double precioComparacion;
     private String idioma;
@@ -20,6 +19,8 @@ public class Producto {
     private Date fecLanzamiento;
     private Date fecCreacion;
     private Date fecUltimaModificacion;
+    private boolean siActivo;
+
     private Marca marca;
     private Franquicia franquicia;
     private Coleccion coleccion;
@@ -27,6 +28,7 @@ public class Producto {
     private List<ImagenProducto> imagenes;
 
     public Producto(){
+        this.imagenes=new ArrayList<>();
     }
 
     public Producto(int productoId, String nombre, String descripcion, String sku, int stock,

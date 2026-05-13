@@ -4,24 +4,17 @@ public class Coleccion {
 
     private int coleccionId;
     private String nombre;
-    private Franquicia franquicia;
+    private Boolean esActivo;
 
     public Coleccion(){
     }
 
-    public Coleccion(int coleccionId,String nombre, Franquicia franquicia){
-        this.coleccionId=coleccionId;
+    public Coleccion(String nombre){
         this.nombre=nombre;
-        this.franquicia=franquicia;
+        this.esActivo=true;
     }
 
     //setters y getters
-    public Franquicia getFranquicia() {
-        return franquicia;
-    }
-    public void setFranquicia(Franquicia franquicia) {
-        this.franquicia=franquicia;
-    }
 
     public int getColeccionId() {
         return coleccionId;

@@ -85,7 +85,7 @@ public class PedidoDAOImpl implements PedidoDAO{
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    pedido.setPedidoId(rs.getInt(1));
+                    pedido.setIdPedido(rs.getInt(1));
                 }
             }
 
@@ -121,7 +121,7 @@ public class PedidoDAOImpl implements PedidoDAO{
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             llenarPreparedStatement(ps, pedido);
-            ps.setInt(14, pedido.getPedidoId());
+            ps.setInt(14, pedido.getIdPedido());
 
             ps.executeUpdate();
 
@@ -144,7 +144,7 @@ public class PedidoDAOImpl implements PedidoDAO{
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, pedido.getPedidoId());
+            ps.setInt(1, pedido.getIdPedido());
             ps.executeUpdate();
 
         } catch (SQLException e) {
@@ -156,7 +156,7 @@ public class PedidoDAOImpl implements PedidoDAO{
 
         Pedido p = new Pedido();
 
-        p.setPedidoId(rs.getInt("pedido_id"));
+        p.setIdPedido(rs.getInt("pedido_id"));
         p.setCodPedido(rs.getString("cod_pedido"));
         p.setClienteEmail(rs.getString("cliente_email"));
         p.setClienteCel(rs.getString("cliente_cel"));

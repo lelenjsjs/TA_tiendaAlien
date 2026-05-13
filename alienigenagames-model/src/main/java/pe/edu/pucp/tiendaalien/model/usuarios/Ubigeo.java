@@ -54,4 +54,8 @@ public class Ubigeo {
         return distrito;
     }
 
+    public String toString() {
+        return "ID = " + ubigeoId + ", Codigo = "+ codigo +", Departamento = " + departamento +
+                ", Provincia = " + provincia + ", Distrito = " + distrito + "\n";
+    }
 }

@@ -14,13 +14,13 @@ public class TipoComprobanteBLImpl implements ITipoComprobanteBL {
     private TipoComprobanteDAO tipoComprobanteDAO = new TipoComprobanteDAOImpl();
 
     @Override
-    public List<TipoComprobante> listarTodo() throws BusinessLogicException {
+    public List<TipoComprobante> listarTiposComprobante() throws BusinessLogicException {
         List<TipoComprobante> lista = tipoComprobanteDAO.listAll();
         return (lista != null) ? lista : new ArrayList<>();
     }
 
     @Override
-    public TipoComprobante cargarPorId(Integer id) throws BusinessLogicException {
+    public TipoComprobante cargarTipoCompPorId(Integer id) throws BusinessLogicException {
         if (id == null || id <= 0) throw new BusinessLogicException("ID no válido.");
         TipoComprobante tc = tipoComprobanteDAO.loadById(id);
         return (tc != null) ? tc : new TipoComprobante();

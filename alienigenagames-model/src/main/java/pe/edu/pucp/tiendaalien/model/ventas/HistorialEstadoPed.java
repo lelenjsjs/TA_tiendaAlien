@@ -2,7 +2,8 @@ package pe.edu.pucp.tiendaalien.model.ventas;
 import java.util.Date;
 
 public class HistorialEstadoPed {
-    private Integer historialId;
+    private Integer id;
+    private Pedido pedido;
     private String estado;
     private Date fecActualizacion;
 
@@ -12,12 +13,6 @@ public class HistorialEstadoPed {
         this.fecActualizacion = fecha;
     }
 
-    public Integer getHistorialId() {
-        return historialId;
-    }
-    public void setHistorialId(Integer historialId) {
-        this.historialId = historialId;
-    }
 
     public String getEstado() {
         return estado;
@@ -31,5 +26,13 @@ public class HistorialEstadoPed {
     }
     public void setFecActualizacion(Date fecActualizacion) {
         this.fecActualizacion = fecActualizacion;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
     }
 }

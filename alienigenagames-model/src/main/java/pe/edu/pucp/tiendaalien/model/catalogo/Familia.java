@@ -4,6 +4,10 @@ public enum Familia {
     PRODUCTO_SELLADO("PRODUCTO SELLADO"),
     ACCESORIO("ACCESORIO");
 
+    public String getTextoParaBD() {
+        return textoParaBD;
+    }
+
     private final String textoParaBD;
 
     Familia(String textoParaBD) {

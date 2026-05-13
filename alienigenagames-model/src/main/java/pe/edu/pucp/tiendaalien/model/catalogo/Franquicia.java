@@ -4,13 +4,14 @@ public class Franquicia {
 
     private int franquiciaId;
     private String nombre;
+    private Boolean esActivo;
 
     public Franquicia(){
     }
 
-    public Franquicia(int franquiciaId, String nombre){
-        this.franquiciaId=franquiciaId;
+    public Franquicia(String nombre){
         this.nombre=nombre;
+        this.esActivo=true;
     }
 
     //setters y getters
@@ -31,4 +32,11 @@ public class Franquicia {
         this.nombre = nombre;
     }
 
+    public Boolean getEsActivo() {
+        return esActivo;
+    }
+
+    public void setEsActivo(Boolean esActivo) {
+        this.esActivo = esActivo;
+    }
 }

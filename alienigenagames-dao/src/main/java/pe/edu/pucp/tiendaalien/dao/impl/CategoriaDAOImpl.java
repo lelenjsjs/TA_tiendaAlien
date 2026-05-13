@@ -75,7 +75,7 @@ public class CategoriaDAOImpl implements CategoriaDAO {
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, c.getNombre());
-            ps.setString(2, c.getFamilia().name()); // Guardamos el nombre del Enum
+            ps.setString(2, c.getFamilia().getTextoParaBD()); // Guardamos el nombre del Enum
 
             int rows = ps.executeUpdate();
             if (rows > 0) {

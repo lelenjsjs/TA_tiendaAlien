@@ -14,13 +14,13 @@ public class UbigeoBLImpl implements IUbigeoBL {
     private UbigeoDAO ubigeoDAO = new UbigeoDAOImpl();
 
     @Override
-    public List<Ubigeo> listarTodo() throws BusinessLogicException {
+    public List<Ubigeo> listarUbigeos() throws BusinessLogicException {
         List<Ubigeo> lista = ubigeoDAO.listAll();
         return (lista != null) ? lista : new ArrayList<>();
     }
 
     @Override
-    public Ubigeo cargarPorId(Integer id) throws BusinessLogicException {
+    public Ubigeo cargarUbigeoPorId(Integer id) throws BusinessLogicException {
         if (id == null || id <= 0) throw new BusinessLogicException("ID no válido.");
         Ubigeo ubi = ubigeoDAO.loadById(id);
         return (ubi != null) ? ubi : new Ubigeo();

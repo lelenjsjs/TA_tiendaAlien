@@ -5,6 +5,7 @@ import pe.edu.pucp.tiendaalien.DBManager;
 import pe.edu.pucp.tiendaalien.model.usuarios.DireccionUsuario;
 import pe.edu.pucp.tiendaalien.model.usuarios.Ubigeo;
 import pe.edu.pucp.tiendaalien.model.usuarios.Usuario;
+import pe.edu.pucp.tiendaalien.model.ventas.Pedido;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class DireccionUsuarioDAOImpl implements DireccionUsuarioDAO {
 
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) d.setDireccionId(rs.getInt(1));
+                if (rs.next()) d.setId(rs.getInt(1));
             }
             return d;
         } catch (SQLException e) {
@@ -38,14 +39,14 @@ public class DireccionUsuarioDAOImpl implements DireccionUsuarioDAO {
     @Override
     public DireccionUsuario loadById(Integer id) {
         // REGLA: Filtramos por es_activo = 1
-        String sql = "SELECT * FROM direccion_usuario WHERE direccion_id = ? AND es_activo = 1";
+        String sql = "SELECT direccion_id, usuario_id, ubigeo_id, direccion, principal,referencia FROM direccion_usuario WHERE direccion_id = ? AND es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return mapResultSet(rs);
+                if (rs.next()) return crearDireccionUsuario(rs);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error al cargar dirección", e);
@@ -57,14 +58,14 @@ public class DireccionUsuarioDAOImpl implements DireccionUsuarioDAO {
     public List<DireccionUsuario> listAll() {
         List<DireccionUsuario> lista = new ArrayList<>();
         // REGLA: Solo listar los activos
-        String sql = "SELECT * FROM direccion_usuario WHERE es_activo = 1";
+        String sql = "SELECT direccion_id, usuario_id, ubigeo_id, direccion, principal,referencia FROM direccion_usuario WHERE es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
-                lista.add(mapResultSet(rs));
+                lista.add(crearDireccionUsuario(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error al listar direcciones", e);
@@ -84,7 +85,7 @@ public class DireccionUsuarioDAOImpl implements DireccionUsuarioDAO {
             ps.setString(3, d.getDireccion());
             ps.setBoolean(4, d.getEsPrincipal());
             ps.setString(5, d.getReferencia());
-            ps.setInt(6, d.getDireccionId());
+            ps.setInt(6, d.getId());
 
             ps.executeUpdate();
             return d;
@@ -101,22 +102,22 @@ public class DireccionUsuarioDAOImpl implements DireccionUsuarioDAO {
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, d.getDireccionId());
+            ps.setInt(1, d.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error al eliminar (desactivar) la dirección", e);
         }
     }
 
-    private DireccionUsuario mapResultSet(ResultSet rs) throws SQLException {
+    private DireccionUsuario crearDireccionUsuario(ResultSet rs) throws SQLException {
         DireccionUsuario d = new DireccionUsuario();
-        d.setDireccionId(rs.getInt("direccion_id"));
+        // direccion_id, usuario_id, ubigeo_id, direccion, principal,referencia
+        d.setId(rs.getInt("direccion_id"));
+        d.setIdUsuario(rs.getInt("usuario_id"));
+        d.setIdUbigeo(rs.getInt("ubigeo_id"));
         d.setDireccion(rs.getString("direccion"));
         d.setEsPrincipal(rs.getBoolean("principal"));
         d.setReferencia(rs.getString("referencia"));
-
-        Usuario user = new Usuario(); user.setUsuarioId(rs.getInt("usuario_id")); d.setUsuario(user);
-        Ubigeo ubi = new Ubigeo(); ubi.setUbigeoId(rs.getInt("ubigeo_id")); d.setUbigeo(ubi);
 
         return d;
     }

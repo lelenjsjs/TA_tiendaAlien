@@ -1,6 +1,6 @@
 package pe.edu.pucp.tiendaalien.bl;
 
-import pe.edu.pucp.tiendaalien.model.usuario.Ubigeo; // Ajusta el import según tu paquete
+import pe.edu.pucp.tiendaalien.model.usuarios.Ubigeo; // Ajusta el import según tu paquete
 import java.util.List;
 
 public interface IUbigeoBL {

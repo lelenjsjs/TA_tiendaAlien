@@ -18,10 +18,10 @@ public class ProductoDAOImpl implements ProductoDAO {
         Producto producto = null;
         try {
             con = DBManager.getInstance().getConnection();
-            String sql = "SELECT producto_id, nombre, descripcion, sku, stock, sl_activo, " +
+            String sql = "SELECT producto_id, nombre, descripcion, sku, stock, " +
                     "precio, precio_comparacion, idioma, tamano, es_preventa, fec_lanzamiento, " +
                     "marca_id, franquicia_id, coleccion_id, categoria_id " +
-                    "FROM producto WHERE producto_id = ?";
+                    "FROM producto WHERE producto_id = ? AND es_activo=1";
 
             pst = con.prepareStatement(sql);
             pst.setInt(1, integer);
@@ -34,13 +34,13 @@ public class ProductoDAOImpl implements ProductoDAO {
                 producto.setDescripcion(rs.getString("descripcion"));
                 producto.setSku(rs.getString("sku"));
                 producto.setStock(rs.getInt("stock"));
-                producto.setSiActivo(rs.getBoolean("sl_activo"));
                 producto.setPrecio(rs.getDouble("precio"));
                 producto.setPrecioComparacion(rs.getDouble("precio_comparacion"));
                 producto.setIdioma(rs.getString("idioma"));
                 producto.setTamano(rs.getString("tamano"));
                 producto.setEsPreventa(rs.getBoolean("es_preventa"));
                 producto.setFecLanzamiento(rs.getDate("fec_lanzamiento"));
+                producto.setSiActivo(rs.getBoolean("es_activo"));
 
 
                 Marca marca = new Marca();
@@ -74,8 +74,8 @@ public class ProductoDAOImpl implements ProductoDAO {
     public Producto save(Producto producto) {
         try {
             con = DBManager.getInstance().getConnection();
-            String sql = "INSERT INTO producto(nombre, descripcion, sku, stock, sl_activo, precio, " +
-                    "precio_comparacion, idioma, tamano, es_preventa, fec_lanzamiento, " +
+            String sql = "INSERT INTO producto(nombre, descripcion, sku, stock, precio, " +
+                    "precio_comparacion, idioma, tamano, es_preventa, fec_lanzamiento, es_activo, " +
                     "marca_id, franquicia_id, coleccion_id, categoria_id) " +
                     "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
@@ -86,13 +86,13 @@ public class ProductoDAOImpl implements ProductoDAO {
             pst.setString(2, producto.getDescripcion());
             pst.setString(3, producto.getSku());
             pst.setInt(4, producto.getStock());
-            pst.setBoolean(5, producto.isSiActivo());
-            pst.setDouble(6, producto.getPrecio());
-            pst.setDouble(7, producto.getPrecioComparacion());
-            pst.setString(8, producto.getIdioma());
-            pst.setString(9, producto.getTamano());
-            pst.setBoolean(10, producto.isEsPreventa());
-            pst.setDate(11, producto.getFecLanzamiento() != null ? new java.sql.Date(producto.getFecLanzamiento().getTime()) : null);
+            pst.setDouble(5, producto.getPrecio());
+            pst.setDouble(6, producto.getPrecioComparacion());
+            pst.setString(7, producto.getIdioma());
+            pst.setString(8, producto.getTamano());
+            pst.setBoolean(9, producto.isEsPreventa());
+            pst.setDate(10, producto.getFecLanzamiento() != null ? new java.sql.Date(producto.getFecLanzamiento().getTime()) : null);
+            pst.setBoolean(11, producto.isSiActivo());
             pst.setInt(12, producto.getMarca().getMarcaId());
             pst.setInt(13, producto.getFranquicia().getFranquiciaId());
             pst.setInt(14, producto.getColeccion().getColeccionId());
@@ -120,10 +120,10 @@ public class ProductoDAOImpl implements ProductoDAO {
     public Producto update(Producto producto) {
         try {
             con = DBManager.getInstance().getConnection();
-            String sql = "UPDATE producto SET nombre=?, descripcion=?, sku=?, stock=?, sl_activo=?, " +
+            String sql = "UPDATE producto SET nombre=?, descripcion=?, sku=?, stock=?," +
                     "precio=?, precio_comparacion=?, idioma=?, tamano=?, es_preventa=?, fec_lanzamiento=?, " +
                     "marca_id=?, franquicia_id=?, coleccion_id=?, categoria_id=? " +
-                    "WHERE producto_id=?";
+                    "WHERE producto_id=? AND es_activo=1";
 
             pst = con.prepareStatement(sql);
 
@@ -131,17 +131,16 @@ public class ProductoDAOImpl implements ProductoDAO {
             pst.setString(2, producto.getDescripcion());
             pst.setString(3, producto.getSku());
             pst.setInt(4, producto.getStock());
-            pst.setBoolean(5, producto.isSiActivo());
-            pst.setDouble(6, producto.getPrecio());
-            pst.setDouble(7, producto.getPrecioComparacion());
-            pst.setString(8, producto.getIdioma());
-            pst.setString(9, producto.getTamano());
-            pst.setBoolean(10, producto.isEsPreventa());
-            pst.setDate(11, producto.getFecLanzamiento() != null ? new java.sql.Date(producto.getFecLanzamiento().getTime()) : null);
-            pst.setInt(12, producto.getMarca().getMarcaId());
-            pst.setInt(13, producto.getFranquicia().getFranquiciaId());
-            pst.setInt(14, producto.getColeccion().getColeccionId());
-            pst.setInt(15, producto.getCategoria().getCategoriaId());
+            pst.setDouble(5, producto.getPrecio());
+            pst.setDouble(6, producto.getPrecioComparacion());
+            pst.setString(7, producto.getIdioma());
+            pst.setString(8, producto.getTamano());
+            pst.setBoolean(9, producto.isEsPreventa());
+            pst.setDate(10, producto.getFecLanzamiento() != null ? new java.sql.Date(producto.getFecLanzamiento().getTime()) : null);
+            pst.setInt(11, producto.getMarca().getMarcaId());
+            pst.setInt(12, producto.getFranquicia().getFranquiciaId());
+            pst.setInt(13, producto.getColeccion().getColeccionId());
+            pst.setInt(14, producto.getCategoria().getCategoriaId());
             // Parámetro para el WHERE
             pst.setInt(16, producto.getProductoId());
 
@@ -162,7 +161,7 @@ public class ProductoDAOImpl implements ProductoDAO {
             con = DBManager.getInstance().getConnection();
 
             // Borrado Físico: Usamos la sentencia DELETE de SQL
-            String sql = "DELETE FROM producto WHERE producto_id = ?";
+            String sql = "UPDATE producto SET es_activo =0 WHERE producto_id=?";
 
             pst = con.prepareStatement(sql);
             pst.setInt(1, producto.getProductoId());

@@ -14,7 +14,7 @@ public class UbigeoDAOImpl implements UbigeoDAO {
     public List<Ubigeo> listAll() {
         List<Ubigeo> lista = new ArrayList<>();
         // REGLA: Solo listar los activos
-        String sql = "SELECT ubigeo_id, codigo, departamento, provincia, distrito FROM ubigeo WHERE es_activo = 1";
+        String sql = "SELECT ubigeo_id, codigo, departamento, provincia, distrito FROM ubigeo";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
@@ -32,7 +32,7 @@ public class UbigeoDAOImpl implements UbigeoDAO {
     @Override
     public Ubigeo loadById(Integer id) {
         // REGLA: Solo cargar si está activo
-        String sql = "SELECT ubigeo_id, codigo, departamento, provincia, distrito FROM ubigeo WHERE ubigeo_id = ? AND es_activo = 1";
+        String sql = "SELECT ubigeo_id, codigo, departamento, provincia, distrito FROM ubigeo WHERE ubigeo_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -51,7 +51,7 @@ public class UbigeoDAOImpl implements UbigeoDAO {
 
     @Override
     public Ubigeo save(Ubigeo u) {
-        String sql = "INSERT INTO ubigeo (codigo, departamento, provincia, distrito, es_activo) VALUES (?, ?, ?, ?, 1)";
+        String sql = "INSERT INTO ubigeo (codigo, departamento, provincia, distrito) VALUES (?, ?, ?, ?)";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -95,17 +95,7 @@ public class UbigeoDAOImpl implements UbigeoDAO {
 
     @Override
     public void remove(Ubigeo u) {
-        // REGLA CUMPLIDA: Borrado lógico con es_activo = 0
-        String sql = "UPDATE ubigeo SET es_activo = 0 WHERE ubigeo_id = ?";
 
-        try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, u.getUbigeoId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al eliminar (desactivar) Ubigeo", e);
-        }
     }
 
     private Ubigeo mapResultSet(ResultSet rs) throws SQLException {

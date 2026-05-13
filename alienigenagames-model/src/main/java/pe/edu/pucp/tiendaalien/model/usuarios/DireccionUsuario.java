@@ -1,70 +1,113 @@
 package pe.edu.pucp.tiendaalien.model.usuarios;
 
 public class DireccionUsuario {
+    private Integer id;
+    private Usuario usuario;
+    private Ubigeo ubigeo;
 
-    private int direccionId;
     private String direccion;
     private Boolean esPrincipal;
     private String referencia;
-    private Ubigeo ubigeo;
 
-    private Usuario usuario;
+    private Boolean esActivo;
 
+
+
+
+
+    // Constructor
     public DireccionUsuario() {
+        usuario = new Usuario();
+        ubigeo = new Ubigeo();
     }
 
-    public DireccionUsuario(int direccionId, String direccion, Boolean esPrincipal,
-                            String referencia, Ubigeo ubigeo,Usuario usuario) {
-        this.direccionId = direccionId;
-        this.direccion = direccion;
-        this.esPrincipal = esPrincipal;
-        this.referencia = referencia;
-        this.ubigeo = ubigeo;
+    public DireccionUsuario(Usuario usuario, Ubigeo ubigeo, String direccion, Boolean esPrincipal, String referencia, Boolean esActivo) {
         this.usuario = usuario;
-    }
-
-    // GETTERS
-    public void setDireccionId(int direccionId) {
-        this.direccionId = direccionId;
-    }
-    public int getDireccionId() {
-        return direccionId;
-    }
-
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-    public String getDireccion() {
-        return direccion;
-    }
-
-    public void setEsPrincipal(Boolean esPrincipal) {
-        this.esPrincipal = esPrincipal;
-    }
-    public Boolean getEsPrincipal() {
-        return esPrincipal;
-    }
-
-    public void setReferencia(String referencia) {
-        this.referencia = referencia;
-    }
-    public String getReferencia() {
-        return referencia;
-    }
-
-    public void setUbigeo(Ubigeo ubigeo) {
         this.ubigeo = ubigeo;
+        this.direccion = direccion;
+        this.esPrincipal = esPrincipal;
+        this.referencia = referencia;
+        this.esActivo = esActivo;
+        usuario = new Usuario();
+        ubigeo = new Ubigeo();
     }
-    public Ubigeo getUbigeo() {
-        return ubigeo;
+
+    public Usuario getUsuario() {
+        return usuario;
     }
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-    public Usuario getUsuario() {
-        return usuario;
+
+    public Ubigeo getUbigeo() {
+        return ubigeo;
+    }
+
+    public void setUbigeo(Ubigeo ubigeo) {
+        this.ubigeo = ubigeo;
+    }
+
+    public void setIdUsuario(int id){
+        this.usuario.setUsuarioId(id);
     }
 
 
+    public int getIdUsuario() {
+        return usuario.getUsuarioId();
+    }
+
+    public void setIdUbigeo(int id){
+        this.ubigeo.setUbigeoId(id);
+    }
+
+    public int getIdUbigeo() {
+        return ubigeo.getUbigeoId();
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public Boolean getEsPrincipal() {
+        return esPrincipal;
+    }
+
+    public void setEsPrincipal(Boolean principal) {
+        this.esPrincipal = principal;
+    }
+
+    public String getReferencia() {
+        return referencia;
+    }
+
+    public void setReferencia(String referencia) {
+        this.referencia = referencia;
+    }
+
+    public Boolean getEsActivo() {
+        return esActivo;
+    }
+
+    public void setEsActivo(Boolean esActivo) {
+        this.esActivo = esActivo;
+    }
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Direccion = " + direccion + ", EsPrincipal = " + esPrincipal + ", Referencia = " + referencia + "\n";
+    }
 }
