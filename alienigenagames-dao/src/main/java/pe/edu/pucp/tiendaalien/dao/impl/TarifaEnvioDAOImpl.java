@@ -17,7 +17,7 @@ public class TarifaEnvioDAOImpl implements TarifaEnvioDAO {
     public List<TarifaEnvio> listAll() {
         List<TarifaEnvio> lista = new ArrayList<>();
         // REGLA: Solo activos
-        String sql = "SELECT * FROM tarifa_envio WHERE activo = 1";
+        String sql = "SELECT * FROM tarifa_envio WHERE es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
@@ -34,7 +34,7 @@ public class TarifaEnvioDAOImpl implements TarifaEnvioDAO {
     @Override
     public TarifaEnvio loadById(Integer id) {
         // REGLA: Solo si está activo
-        String sql = "SELECT * FROM tarifa_envio WHERE tarifa_id = ? AND activo = 1";
+        String sql = "SELECT * FROM tarifa_envio WHERE tarifa_id = ? AND es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -95,7 +95,7 @@ public class TarifaEnvioDAOImpl implements TarifaEnvioDAO {
     @Override
     public void remove(TarifaEnvio t) {
         // REGLA CUMPLIDA: Borrado lógico
-        String sql = "UPDATE tarifa_envio SET activo = 0 WHERE tarifa_id = ?";
+        String sql = "UPDATE tarifa_envio SET es_activo = 0 WHERE tarifa_id = ?";
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, t.getTarifaId());

@@ -5,9 +5,5 @@ import pe.edu.pucp.tiendaalien.model.ventas.Pedido;
 
 import java.util.List;
 public interface PedidoDAO extends BaseDAO<Pedido,Integer> {
-    Pedido loadById(Integer id);
-    Pedido save(Pedido t);
-    Pedido update(Pedido t);
-    void remove(Pedido t);
     List<Pedido> listAll();
 }

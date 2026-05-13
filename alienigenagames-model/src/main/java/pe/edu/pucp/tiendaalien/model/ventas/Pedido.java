@@ -26,7 +26,6 @@ public class Pedido {
 
     // Relaciones de Asociación y Multiplicidad
     private Usuario usuario;              // Un pedido tiene 1 usuario
-    private Ubigeo ubigeo;                // Un pedido puede tener o no tener ubigeo
     private PedLogistica pedLogistica;
     private ComprobantePago comprobante;  // Un pedido puede tener o no un comprobante
 
@@ -38,6 +37,8 @@ public class Pedido {
         this.historial = new ArrayList<>();
         this.fecCreacion = new Date();
     }
+
+
 
 
     // Getters y Setters
@@ -152,13 +153,6 @@ public class Pedido {
         this.usuario = usuario;
     }
 
-    public Ubigeo getUbigeo() {
-        return ubigeo;
-    }
-    public void setUbigeo(Ubigeo ubigeo) {
-        this.ubigeo = ubigeo;
-    }
-
     public PedLogistica getPedLogistica() {
         return pedLogistica;
     }
@@ -187,4 +181,15 @@ public class Pedido {
         this.historial = historial;
     }
 
+
+    public void realizarCalculos() {
+
+        double monto=subtotal;
+        cargoServicio = 5/100 * subtotal;
+        monto += cargoServicio;
+        monto += montoAdelanto;
+
+        this.montoTotal = monto;
+
+    }
 }

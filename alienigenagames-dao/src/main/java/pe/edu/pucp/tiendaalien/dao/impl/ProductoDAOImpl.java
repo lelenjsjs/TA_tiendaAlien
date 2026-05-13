@@ -153,7 +153,7 @@ public class ProductoDAOImpl implements ProductoDAO {
             pst.setDouble(6, producto.getPrecioComparacion());
             pst.setString(7, producto.getIdioma());
             pst.setString(8, producto.getTamano());
-            pst.setBoolean(9, producto.isEsPreventa());
+            pst.setBoolean(9, producto.getEsPreventa());
             // Convertimos de java.util.Date a java.sql.Date usando el tiempo en milisegundos
             pst.setDate(10, new java.sql.Date(producto.getFecLanzamiento().getTime()));
             pst.setBoolean(11, true);
@@ -199,7 +199,7 @@ public class ProductoDAOImpl implements ProductoDAO {
             pst.setDouble(6, producto.getPrecioComparacion());
             pst.setString(7, producto.getIdioma());
             pst.setString(8, producto.getTamano());
-            pst.setBoolean(9, producto.isEsPreventa());
+            pst.setBoolean(9, producto.getEsPreventa());
             pst.setDate(10, producto.getFecLanzamiento() != null ? new java.sql.Date(producto.getFecLanzamiento().getTime()) : null);
             pst.setInt(11, producto.getMarca().getMarcaId());
             pst.setInt(12, producto.getFranquicia().getFranquiciaId());
