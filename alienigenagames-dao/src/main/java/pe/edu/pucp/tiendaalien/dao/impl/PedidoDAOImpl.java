@@ -6,7 +6,7 @@ import java.util.List;
 
 import pe.edu.pucp.tiendaalien.DBManager;
 import pe.edu.pucp.tiendaalien.dao.PedidoDAO;
-import pe.edu.pucp.tiendaalien.model.ventas.Pedido; // Según tu import en imagen
+import pe.edu.pucp.tiendaalien.model.ventas.*;
 
 public class PedidoDAOImpl implements PedidoDAO {
 
@@ -71,8 +71,27 @@ public class PedidoDAOImpl implements PedidoDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     p = new Pedido();
+                    // 1. Identificadores básicos
                     p.setIdPedido(rs.getInt("pedido_id"));
                     p.setCodPedido(rs.getString("cod_pedido"));
+                    p.setFecCreacion(rs.getTimestamp("fec_creacion"));
+
+                    // 2. Mapeo de ENUMS (Es vital usar valueOf para convertir String a Enum)
+                    p.setCanalVenta(CanalVenta.valueOf(rs.getString("canal_venta")));
+                    p.setMetodoPago(MetodoPago.valueOf(rs.getString("metodo_pago")));
+                    p.setEstadoPago(EstadoPago.valueOf(rs.getString("estado_pago")));
+                    p.setEstadoPedido(EstadoPedido.valueOf(rs.getString("estado_pedido")));
+
+                    // 3. Datos de contacto y pasarela
+                    p.setClienteEmail(rs.getString("cliente_email"));
+                    p.setClienteCel(rs.getString("cliente_cel"));
+                    p.setPasarelaTransaccionId(rs.getString("pasarela_transaccion_id"));
+
+                    // 4. Montos (Double/double)
+                    p.setSubtotal(rs.getDouble("subtotal"));
+                    p.setCargoServicio(rs.getDouble("cargo_servicio"));
+                    p.setMontoAdelanto(rs.getDouble("monto_adelanto"));
+                    p.setMontoTotal(rs.getDouble("monto_total"));
                     // Rellenar demás campos...
                 }
             }

@@ -1,28 +1,25 @@
 package pe.edu.pucp.tiendaalien.model.facturacion;
 
-import java.util.List;
-import java.util.ArrayList;
-
 public class TipoComprobante {
-    private int tipo_comprobante_id;
-    private String codigo_sunat;
+    private int tipoComprobanteId;
+    private String codigoSunat;
     private String descripcion;
-
-    // Relación: Un Tipo de Comprobante puede estar en muchos Comprobantes
-    private List<ComprobantePago> comprobantes = new ArrayList<>();
 
     public TipoComprobante() {}
 
-    // Getters y Setters
-    public int getTipo_comprobante_id() { return tipo_comprobante_id; }
-    public void setTipo_comprobante_id(int tipo_comprobante_id) { this.tipo_comprobante_id = tipo_comprobante_id; }
+    public TipoComprobante(int tipoComprobanteId, String codigoSunat, String descripcion) {
+        this.tipoComprobanteId = tipoComprobanteId;
+        this.codigoSunat = codigoSunat;
+        this.descripcion = descripcion;
+    }
 
-    public String getCodigo_sunat() { return codigo_sunat; }
-    public void setCodigo_sunat(String codigo_sunat) { this.codigo_sunat = codigo_sunat; }
+    // Getters y Setters con CamelCase
+    public int getTipoComprobanteId() { return tipoComprobanteId; }
+    public void setTipoComprobanteId(int tipoComprobanteId) { this.tipoComprobanteId = tipoComprobanteId; }
+
+    public String getCodigoSunat() { return codigoSunat; }
+    public void setCodigoSunat(String codigoSunat) { this.codigoSunat = codigoSunat; }
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-
-    public List<ComprobantePago> getComprobantes() { return comprobantes; }
-    public void setComprobantes(List<ComprobantePago> comprobantes) { this.comprobantes = comprobantes; }
 }

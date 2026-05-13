@@ -198,8 +198,8 @@ public class Pedido {
         for(DetallePed det:detalles){
             monto += det.getPrecioUnitCongelado()  * det.getCantidad();
         }
-        subtotal = monto;
-        cargoServicio = 5/100 * subtotal;
+        this.subtotal = monto;
+        this.cargoServicio = 5/100 * subtotal;
         monto += cargoServicio;
         monto += montoAdelanto;
 
