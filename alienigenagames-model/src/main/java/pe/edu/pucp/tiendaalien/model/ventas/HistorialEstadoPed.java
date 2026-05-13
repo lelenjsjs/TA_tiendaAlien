@@ -13,6 +13,8 @@ public class HistorialEstadoPed {
         this.fecActualizacion = fecha;
     }
 
+    public HistorialEstadoPed() {
+    }
 
     public String getEstado() {
         return estado;
@@ -34,5 +36,13 @@ public class HistorialEstadoPed {
 
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

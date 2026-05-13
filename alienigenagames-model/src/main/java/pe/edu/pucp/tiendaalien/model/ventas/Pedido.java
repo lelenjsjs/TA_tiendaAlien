@@ -8,24 +8,32 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Pedido {
-
-    private Integer idPedido;
+    // Datos
+    private Integer idPedido;// PROPIO
     private String codPedido;
-    private String clienteEmail;
-    private String clienteCel;
     private CanalVenta canalVenta;
     private MetodoPago metodoPago; // Representado como enum
     private EstadoPago estadoPago; // Representado como enum
+
+    //CLIENTE
+    private Usuario usuario;
+    private String clienteEmail;
+    private String clienteCel;
+    // Montos
     private Double subtotal;
     private Double cargoServicio;
     private double montoAdelanto;
     private Double montoTotal;
+    // Luego del pago
     private String pasarelaTransaccionId;
+    // Propio de la bd
     private Date fecCreacion;
     private EstadoPedido estadoPedido;
 
+
+
     // Relaciones de Asociación y Multiplicidad
-    private Usuario usuario;              // Un pedido tiene 1 usuario
+                // Un pedido tiene 1 usuario
     private PedLogistica pedLogistica;
     private ComprobantePago comprobante;  // Un pedido puede tener o no un comprobante
 
@@ -37,6 +45,8 @@ public class Pedido {
         this.historial = new ArrayList<>();
         this.fecCreacion = new Date();
     }
+
+
 
 
 
@@ -182,9 +192,13 @@ public class Pedido {
     }
 
 
-    public void realizarCalculos() {
+    public void realizarCalculos(double tarifa) {
 
-        double monto=subtotal;
+        double monto=0;
+        for(DetallePed det:detalles){
+            monto += det.getPrecioUnitCongelado()  * det.getCantidad();
+        }
+        subtotal = monto;
         cargoServicio = 5/100 * subtotal;
         monto += cargoServicio;
         monto += montoAdelanto;

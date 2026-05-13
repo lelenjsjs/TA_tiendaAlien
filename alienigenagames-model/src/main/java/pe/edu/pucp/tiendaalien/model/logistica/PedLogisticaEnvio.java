@@ -6,6 +6,7 @@ public class PedLogisticaEnvio extends PedLogistica{
     private int envioId;
     private TipoEnvio tipoEnvio;
     private ModalidadPago modalidad;
+    private SucursalAgencia sucursal;
     private String direccionEntrega;
     private String referenciaEnvio;
     private String codTracking;
@@ -124,5 +125,13 @@ public class PedLogisticaEnvio extends PedLogistica{
 
     public void setTarifaEnvio(TarifaEnvio tarifaEnvio) {
         this.tarifaEnvio = tarifaEnvio;
+    }
+
+    public SucursalAgencia getSucursal() {
+        return sucursal;
+    }
+
+    public void setSucursal(SucursalAgencia sucursal) {
+        this.sucursal = sucursal;
     }
 }

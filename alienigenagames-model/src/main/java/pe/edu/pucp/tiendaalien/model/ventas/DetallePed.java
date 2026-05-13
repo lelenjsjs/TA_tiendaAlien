@@ -41,7 +41,7 @@ public class DetallePed {
         this.precioUnitCongelado = precioUnitCongelado;
     }
 
-    public boolean isEsPreventaCongelado() {
+    public boolean getEsPreventaCongelado() {
         return esPreventaCongelado;
     }
 
