@@ -4,13 +4,14 @@ public class Marca {
 
     private int marcaId;
     private String nombre;
+    private Boolean esActivo;
 
     public Marca(){
     }
 
-    public Marca(int marcaId, String nombre){
-        this.marcaId=marcaId;
+    public Marca(String nombre){
         this.nombre=nombre;
+        this.esActivo=true;
     }
 
     //SETTERS Y GETTERS
@@ -31,4 +32,11 @@ public class Marca {
         this.nombre = nombre;
     }
 
+    public Boolean getEsActivo() {
+        return esActivo;
+    }
+
+    public void setEsActivo(Boolean esActivo) {
+        this.esActivo = esActivo;
+    }
 }

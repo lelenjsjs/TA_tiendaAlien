@@ -5,14 +5,15 @@ public class Categoria {
     private int categoriaId;
     private String nombre;
     private Familia familia;
+    private Boolean esActivo;
 
     public Categoria(){
     }
 
-    public Categoria(int categoriaId, String nombre, Familia familia){
-        this.categoriaId=categoriaId;
+    public Categoria( String nombre, Familia familia){
         this.nombre=nombre;
         this.familia=familia;
+        this.esActivo=false;
     }
 
     //setters y getters
@@ -41,5 +42,15 @@ public class Categoria {
     }
 
 
+    public Boolean getEsActivo() {
+        return esActivo;
+    }
 
+    public void setEsActivo(Boolean esActivo) {
+        this.esActivo = esActivo;
+    }
+
+    public String toString(){
+        return "ID = " + this.categoriaId + ", Nombre = " + this.nombre + ", Familia = " + this.familia +"\n";
+    }
 }

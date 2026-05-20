@@ -1,5 +1,6 @@
 package pe.edu.pucp.tiendaalien.model.usuarios;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,13 +13,15 @@ public class Usuario {
     private String celular;
     private Rol rol;
     private Date fechaCreacion;
+    private Boolean esActivo;
 
     private List<DireccionUsuario> direcciones;
 
     public Usuario(){
+        direcciones = new ArrayList<DireccionUsuario>();
     }
 
-    public Usuario(int usuarioId,String nombres,String apellidos,String contraHash,String email,
+    public Usuario(int usuarioId,String nombres,String apellidos,String email,String contraHash,
                    String celular,Rol rol, Date fechaCreacion,List<DireccionUsuario> direcciones){
         this.usuarioId=usuarioId;
         this.nombres=nombres;
@@ -28,7 +31,12 @@ public class Usuario {
         this.celular=celular;
         this.rol=rol;
         this.fechaCreacion=fechaCreacion;
-        this.direcciones=direcciones;
+        this.direcciones = new ArrayList<>();
+        this.direcciones = direcciones;
+    }
+
+    public void anadirDireccion(DireccionUsuario direccion){
+        this.direcciones.add(direccion);
     }
 
     public void setUsuarioId(int usuarioId) {
@@ -95,4 +103,27 @@ public class Usuario {
     }
 
 
+    public Boolean getEsActivo() {
+        return esActivo;
+    }
+
+    public void setEsActivo(Boolean esActivo) {
+        this.esActivo = esActivo;
+    }
+
+    @Override
+    public String toString() {
+        String string = "ID = " + usuarioId + ", Nombre = " + nombres + ", Apellidos = " + apellidos + ", Email = " + email
+                + "Celular = " + celular + ", Rol = " + rol + "\n";
+
+        if(!direcciones.isEmpty()){
+            string += "-> Direcciones: \n";
+            for (DireccionUsuario direccion : direcciones) {
+                string += "  " + direccion + "\n";
+            }
+        }
+
+
+        return string;
+    }
 }

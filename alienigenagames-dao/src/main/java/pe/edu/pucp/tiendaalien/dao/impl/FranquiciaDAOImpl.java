@@ -13,7 +13,8 @@ public class FranquiciaDAOImpl implements FranquiciaDAO {
     @Override
     public List<Franquicia> listAll() {
         List<Franquicia> lista = new ArrayList<>();
-        String sql = "SELECT franquicia_id, nombre FROM franquicias";
+        // REGLA: Solo activos y nombre correcto de tabla 'franquicia'
+        String sql = "SELECT franquicia_id, nombre FROM franquicia WHERE es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
@@ -29,8 +30,9 @@ public class FranquiciaDAOImpl implements FranquiciaDAO {
     }
 
     @Override
-    public Franquicia load(Integer id) {
-        String sql = "SELECT franquicia_id, nombre FROM franquicias WHERE franquicia_id = ?";
+    public Franquicia loadById(Integer id) {
+        // REGLA: Solo cargar si está activo
+        String sql = "SELECT franquicia_id, nombre FROM franquicia WHERE franquicia_id = ? AND es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -49,7 +51,7 @@ public class FranquiciaDAOImpl implements FranquiciaDAO {
 
     @Override
     public Franquicia save(Franquicia f) {
-        String sql = "INSERT INTO franquicias (nombre) VALUES (?)";
+        String sql = "INSERT INTO franquicia (nombre, es_activo) VALUES (?, 1)";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -72,7 +74,7 @@ public class FranquiciaDAOImpl implements FranquiciaDAO {
 
     @Override
     public Franquicia update(Franquicia f) {
-        String sql = "UPDATE franquicias SET nombre = ? WHERE franquicia_id = ?";
+        String sql = "UPDATE franquicia SET nombre = ? WHERE franquicia_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -89,7 +91,8 @@ public class FranquiciaDAOImpl implements FranquiciaDAO {
 
     @Override
     public void remove(Franquicia f) {
-        String sql = "DELETE FROM franquicias WHERE franquicia_id = ?";
+        // REGLA CUMPLIDA: Borrado lógico con es_activo = 0
+        String sql = "UPDATE franquicia SET es_activo = 0 WHERE franquicia_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {

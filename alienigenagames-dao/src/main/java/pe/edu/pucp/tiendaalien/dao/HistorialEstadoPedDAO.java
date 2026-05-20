@@ -3,12 +3,9 @@ package pe.edu.pucp.tiendaalien.dao;
 import pe.edu.pucp.tiendaalien.dao.base.BaseDAO;
 import pe.edu.pucp.tiendaalien.model.ventas.HistorialEstadoPed;
 
-import java.util.List;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-public interface HistorialEstadoPedDAO extends BaseDAO<HistorialEstadoPed,Integer> {
-    HistorialEstadoPed load (Integer id);
-    HistorialEstadoPed save (HistorialEstadoPed t);
-    HistorialEstadoPed update (HistorialEstadoPed t);
-    void remove (HistorialEstadoPed t);
-    List<HistorialEstadoPed> listAll ();
+public interface HistorialEstadoPedDAO extends BaseDAO<HistorialEstadoPed, Integer> {
+    HistorialEstadoPed save(HistorialEstadoPed h, Connection con) throws SQLException;
 }

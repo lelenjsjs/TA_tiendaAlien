@@ -6,7 +6,7 @@ import pe.edu.pucp.tiendaalien.model.logistica.TarifaEnvio;
 import java.util.List;
 
 public interface TarifaEnvioDAO extends BaseDAO<TarifaEnvio, Integer> {
-    TarifaEnvio load(Integer id);
+    TarifaEnvio loadById(Integer id);
     TarifaEnvio save(TarifaEnvio t);
     TarifaEnvio update(TarifaEnvio t);
     void remove(TarifaEnvio t);

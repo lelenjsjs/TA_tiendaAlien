@@ -29,7 +29,7 @@ public class ImagenProductoDAOImpl implements ImagenProductoDAO {
     }
 
     @Override
-    public ImagenProducto load(Integer id) {
+    public ImagenProducto loadById(Integer id) {
         String sql = "SELECT url_imagen, si_principal FROM imagenes_producto WHERE imagen_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();

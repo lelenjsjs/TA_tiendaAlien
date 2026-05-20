@@ -1,197 +1,149 @@
 package pe.edu.pucp.tiendaalien.dao.impl;
-import pe.edu.pucp.tiendaalien.dao.PedidoDAO;
-import pe.edu.pucp.tiendaalien.DBManager;
-import pe.edu.pucp.tiendaalien.model.ventas.*;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PedidoDAOImpl implements PedidoDAO{
+import pe.edu.pucp.tiendaalien.DBManager;
+import pe.edu.pucp.tiendaalien.dao.PedidoDAO;
+import pe.edu.pucp.tiendaalien.model.ventas.*;
+
+public class PedidoDAOImpl implements PedidoDAO {
+
+    /* --- MÉTODOS PARA LA TRANSACCIÓN (Reciben Connection) --- */
+
+    /**
+     * Inserta la cabecera del pedido usando una conexión externa.
+     * Devuelve el objeto Pedido con el ID autogenerado.
+     */
     @Override
-    public List<Pedido> listAll() {
-        List<Pedido> lista = new ArrayList<>();
-        String sql = "SELECT pedido_id, cod_pedido,cliente_email,cliente_cel,canal_venta, metodo_pago, " +
-                "estado_pago,subtotal,cargo_servicio,monto_adelanto,monto_total,pasarela_transaccion_id,fec_creacion,\n" +
-                "estado_pedido FROM pedido WHERE activo = 1";
-        try (Connection con = DBManager.getInstance().getConnection();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+    public Pedido save(Pedido pedido, Connection con) throws SQLException {
+        // 1. Añadimos las columnas faltantes al SQL
+        String sql = "INSERT INTO pedido (cod_pedido, canal_venta, subtotal, monto_total, " +
+                "estado_pedido, usuario_id, fec_creacion, metodo_pago, estado_pago, " +
+                "cliente_email, cliente_cel) " + // <--- Columnas nuevas
+                "VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?)"; // <--- Dos '?' más
 
-            while (rs.next()) {
-                lista.add(mapearPedido(rs));
-            }
+        try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, pedido.getCodPedido());
+            ps.setString(2, pedido.getCanalVenta().name());
+            ps.setDouble(3, pedido.getSubtotal());
+            ps.setDouble(4, pedido.getMontoTotal());
+            ps.setString(5, pedido.getEstadoPedido().name());
+            ps.setInt(6, pedido.getUsuario().getUsuarioId());
+            ps.setString(7, pedido.getMetodoPago().name());
+            ps.setString(8, pedido.getEstadoPago().name());
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return lista;
-    }
-
-    @Override
-    public Pedido load(Integer id) {
-        String sql = "SELECT pedido_id, cod_pedido,cliente_email,cliente_cel,canal_venta, metodo_pago, " +
-                "estado_pago,subtotal,cargo_servicio,monto_adelanto,monto_total,pasarela_transaccion_id,fec_creacion,\n" +
-                "estado_pedido FROM pedido WHERE  id = ?";
-
-        try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, id);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return mapearPedido(rs);
-                }
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
-    }
-
-    @Override
-    public Pedido save(Pedido pedido) {
-
-        String sql = """
-            INSERT INTO pedido(
-                cod_pedido,
-                cliente_email,
-                cliente_cel,
-                canal_venta,
-                metodo_pago,
-                estado_pago,
-                subtotal,
-                cargo_servicio,
-                monto_adelanto,
-                monto_total,
-                pasarela_transaccion_id,
-                fec_creacion,
-                estado_pedido,
-                activo
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
-        """;
-
-        try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            llenarPreparedStatement(ps, pedido);
+            // 2. Seteamos el email y celular del cliente desde el objeto Usuario
+            ps.setString(9, pedido.getUsuario().getEmail()); // <--- Corregido
+            ps.setString(10, pedido.getUsuario().getCelular()); // <--- Corregido
 
             ps.executeUpdate();
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    pedido.setPedidoId(rs.getInt(1));
+                    pedido.setIdPedido(rs.getInt(1));
                 }
             }
-
-            return pedido;
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
+        return pedido;
+    }
+
+    /* --- MÉTODOS CRUD NORMALES (Gestionan su propia conexión) --- */
+
+    @Override
+    public Pedido save(Pedido pedido) {
+        try (Connection con = DBManager.getInstance().getConnection()) {
+            return save(pedido, con);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     @Override
-    public Pedido update(Pedido pedido) {
-
-        String sql = """
-            UPDATE pedido SET
-                cod_pedido = ?,
-                cliente_email = ?,
-                cliente_cel = ?,
-                canal_venta = ?,
-                metodo_pago = ?,
-                estado_pago = ?,
-                subtotal = ?,
-                cargo_servicio = ?,
-                monto_adelanto = ?,
-                monto_total = ?,
-                pasarela_transaccion_id = ?,
-                fec_creacion = ?,
-                estado_pedido = ?
-            WHERE pedido_id = ?
-        """;
-
+    public Pedido loadById(Integer id) {
+        Pedido p = null;
+        String sql = "SELECT * FROM pedido WHERE pedido_id = ?";
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    p = new Pedido();
+                    // 1. Identificadores básicos
+                    p.setIdPedido(rs.getInt("pedido_id"));
+                    p.setCodPedido(rs.getString("cod_pedido"));
+                    p.setFecCreacion(rs.getTimestamp("fec_creacion"));
 
-            llenarPreparedStatement(ps, pedido);
-            ps.setInt(14, pedido.getPedidoId());
+                    // 2. Mapeo de ENUMS (Es vital usar valueOf para convertir String a Enum)
+                    p.setCanalVenta(CanalVenta.valueOf(rs.getString("canal_venta")));
+                    p.setMetodoPago(MetodoPago.valueOf(rs.getString("metodo_pago")));
+                    p.setEstadoPago(EstadoPago.valueOf(rs.getString("estado_pago")));
+                    p.setEstadoPedido(EstadoPedido.valueOf(rs.getString("estado_pedido")));
 
-            ps.executeUpdate();
+                    // 3. Datos de contacto y pasarela
+                    p.setClienteEmail(rs.getString("cliente_email"));
+                    p.setClienteCel(rs.getString("cliente_cel"));
+                    p.setPasarelaTransaccionId(rs.getString("pasarela_transaccion_id"));
 
-            return pedido;
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+                    // 4. Montos (Double/double)
+                    p.setSubtotal(rs.getDouble("subtotal"));
+                    p.setCargoServicio(rs.getDouble("cargo_servicio"));
+                    p.setMontoAdelanto(rs.getDouble("monto_adelanto"));
+                    p.setMontoTotal(rs.getDouble("monto_total"));
+                    // Rellenar demás campos...
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-    }
-
-    @Override
-    public void remove(Pedido pedido) {
-
-        String sql = """
-            UPDATE pedido
-            SET activo = 0
-            WHERE pedido_id = ?
-        """;
-
-        try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, pedido.getPedidoId());
-            ps.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Pedido mapearPedido(ResultSet rs) throws SQLException {
-
-        Pedido p = new Pedido();
-
-        p.setPedidoId(rs.getInt("pedido_id"));
-        p.setCodPedido(rs.getString("cod_pedido"));
-        p.setClienteEmail(rs.getString("cliente_email"));
-        p.setClienteCel(rs.getString("cliente_cel"));
-
-        p.setCanalVenta(CanalVenta.valueOf(rs.getString("canal_venta")));
-        p.setMetodoPago(MetodoPago.valueOf(rs.getString("metodo_pago")));
-        p.setEstadoPago(EstadoPago.valueOf(rs.getString("estado_pago")));
-        p.setEstadoPedido(EstadoPedido.valueOf(rs.getString("estado_pedido")));
-
-        p.setSubtotal(rs.getDouble("subtotal"));
-        p.setCargoServicio(rs.getDouble("cargo_servicio"));
-        p.setMontoAdelanto(rs.getDouble("monto_adelanto"));
-        p.setMontoTotal(rs.getDouble("monto_total"));
-
-        p.setPasarelaTransaccionId(rs.getString("pasarela_transaccion_id"));
-        p.setFecCreacion(rs.getTimestamp("fec_creacion"));
-
         return p;
     }
 
-    private void llenarPreparedStatement(PreparedStatement ps, Pedido p)
-            throws SQLException {
+    @Override
+    public Pedido update(Pedido p) {
+        String sql = "UPDATE pedido SET estado_pedido = ? WHERE pedido_id = ?";
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, p.getEstadoPedido().name());
+            ps.setInt(2, p.getIdPedido());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return p;
+    }
 
-        ps.setString(1, p.getCodPedido());
-        ps.setString(2, p.getClienteEmail());
-        ps.setString(3, p.getClienteCel());
-        ps.setString(4, p.getCanalVenta().name());
-        ps.setString(5, p.getMetodoPago().name());
-        ps.setString(6, p.getEstadoPago().name());
-        ps.setDouble(7, p.getSubtotal());
-        ps.setDouble(8, p.getCargoServicio());
-        ps.setDouble(9, p.getMontoAdelanto());
-        ps.setDouble(10, p.getMontoTotal());
-        ps.setString(11, p.getPasarelaTransaccionId());
-        ps.setTimestamp(12, new Timestamp(p.getFecCreacion().getTime()));
-        ps.setString(13, p.getEstadoPedido().name());
+    @Override
+    public void remove(Pedido p) {
+        // En pedidos usualmente se hace un borrado lógico o anulación de estado
+        String sql = "UPDATE pedido SET estado_pedido = 'ANULADO' WHERE pedido_id = ?";
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, p.getIdPedido());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<Pedido> listAll() {
+        List<Pedido> lista = new ArrayList<>();
+        String sql = "SELECT * FROM pedido";
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Pedido p = new Pedido();
+                p.setIdPedido(rs.getInt("pedido_id"));
+                p.setCodPedido(rs.getString("cod_pedido"));
+                lista.add(p);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return lista;
     }
 }

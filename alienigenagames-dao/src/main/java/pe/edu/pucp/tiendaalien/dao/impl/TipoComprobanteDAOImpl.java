@@ -1,7 +1,7 @@
 package pe.edu.pucp.tiendaalien.dao.impl;
 
-import pe.edu.pucp.tiendaalien.dao.TipoComprobanteDAO;
 import pe.edu.pucp.tiendaalien.DBManager;
+import pe.edu.pucp.tiendaalien.dao.TipoComprobanteDAO;
 import pe.edu.pucp.tiendaalien.model.facturacion.TipoComprobante;
 
 import java.sql.*;
@@ -13,6 +13,7 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
     @Override
     public List<TipoComprobante> listAll() {
         List<TipoComprobante> lista = new ArrayList<>();
+        // Eliminado el WHERE es_activo = 1
         String sql = "SELECT tipo_comprobante_id, codigo_sunat, descripcion FROM tipo_comprobante";
 
         try (Connection con = DBManager.getInstance().getConnection();
@@ -29,7 +30,7 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
     }
 
     @Override
-    public TipoComprobante load(Integer id) {
+    public TipoComprobante loadById(Integer id) { // Cambiado a int primitivo según la Interfaz
         String sql = "SELECT tipo_comprobante_id, codigo_sunat, descripcion FROM tipo_comprobante WHERE tipo_comprobante_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
@@ -47,22 +48,22 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
         return null;
     }
 
-    @Override
+    // Nota: Si tu interfaz no tiene save/update/remove, estos métodos son opcionales
+    // pero los dejo corregidos con el nuevo Modelo CamelCase
+
     public TipoComprobante save(TipoComprobante tc) {
         String sql = "INSERT INTO tipo_comprobante (codigo_sunat, descripcion) VALUES (?, ?)";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, tc.getCodigo_sunat());
+            ps.setString(1, tc.getCodigoSunat()); // Corregido CamelCase
             ps.setString(2, tc.getDescripcion());
 
-            int rows = ps.executeUpdate();
-            if (rows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        tc.setTipo_comprobante_id(rs.getInt(1));
-                    }
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    tc.setTipoComprobanteId(rs.getInt(1)); // Corregido CamelCase
                 }
             }
             return tc;
@@ -78,11 +79,18 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, tc.getCodigo_sunat());
+            // Usamos los nombres de los métodos corregidos (CamelCase)
+            ps.setString(1, tc.getCodigoSunat());
             ps.setString(2, tc.getDescripcion());
-            ps.setInt(3, tc.getTipo_comprobante_id());
+            ps.setInt(3, tc.getTipoComprobanteId());
 
-            ps.executeUpdate();
+            int filasAfectadas = ps.executeUpdate();
+
+            if (filasAfectadas == 0) {
+                // Opcional: podrías lanzar una excepción si intentan actualizar un ID que no existe
+                System.out.println("No se encontró el tipo de comprobante con ID: " + tc.getTipoComprobanteId());
+            }
+
             return tc;
         } catch (SQLException e) {
             throw new RuntimeException("Error al actualizar tipo de comprobante", e);
@@ -90,23 +98,27 @@ public class TipoComprobanteDAOImpl implements TipoComprobanteDAO {
     }
 
     @Override
-    public void remove(TipoComprobante tc) {
+    public void remove(TipoComprobante t) {
+        // Cambiado a DELETE físico ya que no existe la columna es_activo
         String sql = "DELETE FROM tipo_comprobante WHERE tipo_comprobante_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, tc.getTipo_comprobante_id());
+            ps.setInt(1, t.getTipoComprobanteId());
             ps.executeUpdate();
+
         } catch (SQLException e) {
-            throw new RuntimeException("Error al eliminar tipo de comprobante", e);
+            // Este error saltará si intentas borrar un tipo que ya está siendo usado por un comprobante (por el FK)
+            throw new RuntimeException("No se puede eliminar el tipo de comprobante porque tiene registros asociados o error de red.", e);
         }
     }
 
     private TipoComprobante mapResultSet(ResultSet rs) throws SQLException {
         TipoComprobante tc = new TipoComprobante();
-        tc.setTipo_comprobante_id(rs.getInt("tipo_comprobante_id"));
-        tc.setCodigo_sunat(rs.getString("codigo_sunat"));
+        // Sincronizado con el modelo CamelCase corregido
+        tc.setTipoComprobanteId(rs.getInt("tipo_comprobante_id"));
+        tc.setCodigoSunat(rs.getString("codigo_sunat"));
         tc.setDescripcion(rs.getString("descripcion"));
         return tc;
     }

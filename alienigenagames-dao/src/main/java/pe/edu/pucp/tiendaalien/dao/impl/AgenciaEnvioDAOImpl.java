@@ -13,14 +13,13 @@ public class AgenciaEnvioDAOImpl implements AgenciaEnvioDAO {
     @Override
     public List<AgenciaEnvio> listAll() {
         List<AgenciaEnvio> lista = new ArrayList<>();
-        String sql = "SELECT agencia_id, nombre, url_tracking FROM agencias_de_envio";
-
+        String sql = "SELECT agencia_id, nombre, url_tracking FROM agencias_de_envio WHERE es_activo=1";
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
-                lista.add(mapResultSet(rs));
+                lista.add(crearAgencia(rs));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error al listar Agencias de Envío", e);
@@ -29,7 +28,26 @@ public class AgenciaEnvioDAOImpl implements AgenciaEnvioDAO {
     }
 
     @Override
-    public AgenciaEnvio load(Integer id) {
+    public AgenciaEnvio loadByName(String name) {
+        String sql = "SELECT agencia_id, nombre, url_tracking FROM agencias_de_envio WHERE nombre = ?";
+
+        try (Connection con = DBManager.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, name);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return crearAgencia(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al cargar Agencia con nombre : " + name, e);
+        }
+        return null;
+    }
+
+    @Override
+    public AgenciaEnvio loadById(Integer id) {
         String sql = "SELECT agencia_id, nombre, url_tracking FROM agencias_de_envio WHERE agencia_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
@@ -38,7 +56,7 @@ public class AgenciaEnvioDAOImpl implements AgenciaEnvioDAO {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSet(rs);
+                    return crearAgencia(rs);
                 }
             }
         } catch (SQLException e) {
@@ -91,23 +109,30 @@ public class AgenciaEnvioDAOImpl implements AgenciaEnvioDAO {
 
     @Override
     public void remove(AgenciaEnvio a) {
-        String sql = "DELETE FROM agencias_de_envio WHERE agencia_id = ?";
+        String sql = "UPDATE agencias_de_envio SET es_activo = 0 WHERE agencia_id = ? AND es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, a.getAgenciaId());
-            ps.executeUpdate();
+            // 1. Capturamos cuántas filas se actualizaron
+            int rowsAffected = ps.executeUpdate();
+
+            // 2. Si es 0, significa que el ID no existía
+            if (rowsAffected == 0) {
+                System.out.println("La agencia a eliminar ya esta desactivada");
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Error al eliminar Agencia", e);
         }
     }
 
-    private AgenciaEnvio mapResultSet(ResultSet rs) throws SQLException {
+    private AgenciaEnvio crearAgencia(ResultSet rs) throws SQLException {
         AgenciaEnvio a = new AgenciaEnvio();
         a.setAgenciaId(rs.getInt("agencia_id"));
         a.setNombre(rs.getString("nombre"));
         a.setUrlTracking(rs.getString("url_tracking"));
+        a.setEsActivo(true);
         return a;
     }
 }

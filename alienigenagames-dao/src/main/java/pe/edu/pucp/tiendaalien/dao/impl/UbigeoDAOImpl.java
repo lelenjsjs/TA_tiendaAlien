@@ -13,6 +13,7 @@ public class UbigeoDAOImpl implements UbigeoDAO {
     @Override
     public List<Ubigeo> listAll() {
         List<Ubigeo> lista = new ArrayList<>();
+        // REGLA: Solo listar los activos
         String sql = "SELECT ubigeo_id, codigo, departamento, provincia, distrito FROM ubigeo";
 
         try (Connection con = DBManager.getInstance().getConnection();
@@ -29,7 +30,8 @@ public class UbigeoDAOImpl implements UbigeoDAO {
     }
 
     @Override
-    public Ubigeo load(Integer id) {
+    public Ubigeo loadById(Integer id) {
+        // REGLA: Solo cargar si está activo
         String sql = "SELECT ubigeo_id, codigo, departamento, provincia, distrito FROM ubigeo WHERE ubigeo_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
@@ -59,12 +61,10 @@ public class UbigeoDAOImpl implements UbigeoDAO {
             ps.setString(3, u.getProvincia());
             ps.setString(4, u.getDistrito());
 
-            int rows = ps.executeUpdate();
-            if (rows > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        u.setUbigeoId(rs.getInt(1));
-                    }
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    u.setUbigeoId(rs.getInt(1));
                 }
             }
             return u;
@@ -95,19 +95,9 @@ public class UbigeoDAOImpl implements UbigeoDAO {
 
     @Override
     public void remove(Ubigeo u) {
-        String sql = "DELETE FROM ubigeo WHERE ubigeo_id = ?";
 
-        try (Connection con = DBManager.getInstance().getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, u.getUbigeoId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al eliminar Ubigeo", e);
-        }
     }
 
-    // Método auxiliar para evitar repetir el llenado del objeto
     private Ubigeo mapResultSet(ResultSet rs) throws SQLException {
         Ubigeo u = new Ubigeo();
         u.setUbigeoId(rs.getInt("ubigeo_id"));

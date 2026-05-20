@@ -8,25 +8,32 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Pedido {
-
-    private Integer pedidoId;
+    // Datos
+    private Integer idPedido;// PROPIO
     private String codPedido;
-    private String clienteEmail;
-    private String clienteCel;
     private CanalVenta canalVenta;
     private MetodoPago metodoPago; // Representado como enum
     private EstadoPago estadoPago; // Representado como enum
+
+    //CLIENTE
+    private Usuario usuario;
+    private String clienteEmail;
+    private String clienteCel;
+    // Montos
     private Double subtotal;
     private Double cargoServicio;
     private double montoAdelanto;
     private Double montoTotal;
+    // Luego del pago
     private String pasarelaTransaccionId;
+    // Propio de la bd
     private Date fecCreacion;
     private EstadoPedido estadoPedido;
 
+
+
     // Relaciones de Asociación y Multiplicidad
-    private Usuario usuario;              // Un pedido tiene 1 usuario
-    private Ubigeo ubigeo;                // Un pedido puede tener o no tener ubigeo
+                // Un pedido tiene 1 usuario
     private PedLogistica pedLogistica;
     private ComprobantePago comprobante;  // Un pedido puede tener o no un comprobante
 
@@ -40,12 +47,16 @@ public class Pedido {
     }
 
 
+
+
+
+
     // Getters y Setters
-    public Integer getPedidoId() {
-        return pedidoId;
+    public Integer getIdPedido() {
+        return idPedido;
     }
-    public void setPedidoId(Integer pedidoId) {
-        this.pedidoId = pedidoId;
+    public void setIdPedido(Integer pedidoId) {
+        this.idPedido = pedidoId;
     }
 
     public String getCodPedido() {
@@ -152,13 +163,6 @@ public class Pedido {
         this.usuario = usuario;
     }
 
-    public Ubigeo getUbigeo() {
-        return ubigeo;
-    }
-    public void setUbigeo(Ubigeo ubigeo) {
-        this.ubigeo = ubigeo;
-    }
-
     public PedLogistica getPedLogistica() {
         return pedLogistica;
     }
@@ -187,4 +191,19 @@ public class Pedido {
         this.historial = historial;
     }
 
+
+    public void realizarCalculos(double tarifa) {
+
+        double monto=0;
+        for(DetallePed det:detalles){
+            monto += det.getPrecioUnitCongelado()  * det.getCantidad();
+        }
+        this.subtotal = monto;
+        this.cargoServicio = 5/100 * subtotal;
+        monto += cargoServicio;
+        monto += montoAdelanto;
+
+        this.montoTotal = monto;
+
+    }
 }

@@ -13,7 +13,8 @@ public class MarcaDAOImpl implements MarcaDAO {
     @Override
     public List<Marca> listAll() {
         List<Marca> lista = new ArrayList<>();
-        String sql = "SELECT marca_id, nombre FROM marca";
+        // REGLA: Solo listar los activos (es_activo = 1)
+        String sql = "SELECT marca_id, nombre FROM marca WHERE es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              Statement st = con.createStatement();
@@ -29,8 +30,9 @@ public class MarcaDAOImpl implements MarcaDAO {
     }
 
     @Override
-    public Marca load(Integer id) {
-        String sql = "SELECT marca_id, nombre FROM marca WHERE marca_id = ?";
+    public Marca loadById(Integer id) {
+        // REGLA: Solo cargar si está activo
+        String sql = "SELECT marca_id, nombre FROM marca WHERE marca_id = ? AND es_activo = 1";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -49,7 +51,8 @@ public class MarcaDAOImpl implements MarcaDAO {
 
     @Override
     public Marca save(Marca m) {
-        String sql = "INSERT INTO marca (nombre) VALUES (?)";
+        // Al insertar, por defecto va con es_activo = 1
+        String sql = "INSERT INTO marca (nombre, es_activo) VALUES (?, 1)";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -89,15 +92,20 @@ public class MarcaDAOImpl implements MarcaDAO {
 
     @Override
     public void remove(Marca m) {
-        String sql = "DELETE FROM marca WHERE marca_id = ?";
+        // REGLA CUMPLIDA: Borrado lógico en lugar de DELETE físico
+        String sql = "UPDATE marca SET es_activo = 0 WHERE marca_id = ?";
 
         try (Connection con = DBManager.getInstance().getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, m.getMarcaId());
-            ps.executeUpdate();
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected == 0) {
+                System.out.println("La marca a eliminar ya está desactivada o no existe.");
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Error al eliminar Marca", e);
+            throw new RuntimeException("Error al eliminar Marca (borrado lógico)", e);
         }
     }
 

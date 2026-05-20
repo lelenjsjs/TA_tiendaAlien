@@ -4,59 +4,25 @@ import pe.edu.pucp.tiendaalien.model.catalogo.Producto;
 
 public class DetallePed {
 
-    private Integer detallePedId;
-    private String nombreCongelado;
-    private Double precioUnCongelado;
+    private Integer id;
+    private Pedido pedido;
+    private Producto producto;
+    private Double precioUnitCongelado;
     private boolean esPreventaCongelado;
     private Integer cantidad;
 
     // Un detalle tiene un producto
-    private Producto producto;
+    private DetallePed(Pedido pedido, Producto producto, Double precioUnitCongelado,
+                              boolean esPreventaCongelado, Integer cantidad) {
+        this.pedido = pedido;
+        this.producto = producto;
+        this.precioUnitCongelado = precioUnitCongelado;
+        this.esPreventaCongelado = esPreventaCongelado;
+        this.cantidad = cantidad;
+    };
 
     public DetallePed() {}
 
-    public Integer getDetallePedId() {
-        return detallePedId;
-    }
-    public void setDetallePedId(Integer detallePedId) {
-        this.detallePedId = detallePedId;
-    }
-
-    public String getNombreCongelado() {
-        return nombreCongelado;
-    }
-    public void setNombreCongelado(String nombreCongelado) {
-        this.nombreCongelado = nombreCongelado;
-    }
-
-    public Double getPrecioUnCongelado() {
-        return precioUnCongelado;
-    }
-    public void setPrecioUnCongelado(Double precioUnCongelado) {
-        this.precioUnCongelado = precioUnCongelado;
-    }
-
-    public boolean isEsPreventaCongelado() {
-        return esPreventaCongelado;
-    }
-
-    public void setEsPreventaCongelado(boolean esPreventaCongelado) {
-        this.esPreventaCongelado = esPreventaCongelado;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public Producto getProducto() {
-        return producto;
-    }
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
 
     //Multiplica precioUnCongelado * cantidad
     public Double calcularSubtotalDetalle(){
@@ -67,4 +33,51 @@ public class DetallePed {
         return true;
     }
 
+    public Double getPrecioUnitCongelado() {
+        return precioUnitCongelado;
+    }
+
+    public void setPrecioUnitCongelado(Double precioUnitCongelado) {
+        this.precioUnitCongelado = precioUnitCongelado;
+    }
+
+    public boolean getEsPreventaCongelado() {
+        return esPreventaCongelado;
+    }
+
+    public void setEsPreventaCongelado(boolean esPreventaCongelado) {
+        this.esPreventaCongelado = esPreventaCongelado;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
+    }
 }

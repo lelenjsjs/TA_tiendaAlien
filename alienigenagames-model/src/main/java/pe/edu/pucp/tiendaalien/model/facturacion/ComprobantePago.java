@@ -1,35 +1,46 @@
 package pe.edu.pucp.tiendaalien.model.facturacion;
 
-import java.util.Date;
 import pe.edu.pucp.tiendaalien.model.ventas.Pedido;
+import java.util.Date;
 
 public class ComprobantePago {
+    // Identificador único correlativo al script SQL
+    private int comprobanteId;
 
-    private int comprobante_id;
-    private String nro_serie;
-    private String correlativo;
-    private String cliente_nro_doc = "00000000";
-    private String cliente_denominacion = "Clientes Varios";
-    private String direccion_fiscal;
-    private double monto_total;
-    private double monto_igv;
-    private double monto_gravado;
-    private EstadoSunat estado_sunat;
-    private String url_xml;
-    private String url_pdf;
-    private Date fec_emision;
+    // Relaciones con otras entidades (Objetos, no solo IDs)
     private Pedido pedido;
     private TipoComprobante tipoComprobante;
     private TipoDocIdentidad tipoDocIdentidad;
 
-    public ComprobantePago() {}
+    // Atributos de cabecera
+    private String nroSerie;
+    private String correlativo;
+    private String clienteNroDoc;
+    private String clienteDenominacion;
+    private String direccionFiscal;
 
-    // Getters y Setters
-    public int getComprobante_id() { return comprobante_id; }
-    public void setComprobante_id(int comprobante_id) { this.comprobante_id = comprobante_id; }
+    // Atributos monetarios
+    private double montoTotal;
+    private double montoIgv;
+    private double montoGravado;
 
-    public EstadoSunat getEstado_sunat() { return estado_sunat; }
-    public void setEstado_sunat(EstadoSunat estado_sunat) { this.estado_sunat = estado_sunat; }
+    // Atributos de control y SUNAT
+    private EstadoSunat estadoSunat;
+    private String urlXml;
+    private String urlPdf;
+    private Date fecEmision;
+
+    // Constructor con valores por defecto según tu script SQL
+    public ComprobantePago() {
+        this.estadoSunat = EstadoSunat.PENDIENTE;
+        this.clienteNroDoc = "00000000";
+        this.clienteDenominacion = "Clientes Varios";
+    }
+
+    // --- GETTERS Y SETTERS (Indispensables para el DAO) ---
+
+    public int getComprobanteId() { return comprobanteId; }
+    public void setComprobanteId(int comprobanteId) { this.comprobanteId = comprobanteId; }
 
     public Pedido getPedido() { return pedido; }
     public void setPedido(Pedido pedido) { this.pedido = pedido; }
@@ -37,44 +48,42 @@ public class ComprobantePago {
     public TipoComprobante getTipoComprobante() { return tipoComprobante; }
     public void setTipoComprobante(TipoComprobante tipoComprobante) { this.tipoComprobante = tipoComprobante; }
 
-    public String getNro_serie() { return nro_serie; }
-    public void setNro_serie(String nro_serie) { this.nro_serie = nro_serie; }
+    public TipoDocIdentidad getTipoDocIdentidad() { return tipoDocIdentidad; }
+    public void setTipoDocIdentidad(TipoDocIdentidad tipoDocIdentidad) { this.tipoDocIdentidad = tipoDocIdentidad; }
+
+    public String getNroSerie() { return nroSerie; }
+    public void setNroSerie(String nroSerie) { this.nroSerie = nroSerie; }
 
     public String getCorrelativo() { return correlativo; }
     public void setCorrelativo(String correlativo) { this.correlativo = correlativo; }
 
-    public String getCliente_nro_doc() { return cliente_nro_doc; }
-    public void setCliente_nro_doc(String cliente_nro_doc) { this.cliente_nro_doc = cliente_nro_doc; }
+    public String getClienteNroDoc() { return clienteNroDoc; }
+    public void setClienteNroDoc(String clienteNroDoc) { this.clienteNroDoc = clienteNroDoc; }
 
-    public String getCliente_denominacion() { return cliente_denominacion; }
-    public void setCliente_denominacion(String cliente_denominacion) { this.cliente_denominacion = cliente_denominacion; }
+    public String getClienteDenominacion() { return clienteDenominacion; }
+    public void setClienteDenominacion(String clienteDenominacion) { this.clienteDenominacion = clienteDenominacion; }
 
-    public String getDireccion_fiscal() { return direccion_fiscal; }
-    public void setDireccion_fiscal(String direccion_fiscal) { this.direccion_fiscal = direccion_fiscal; }
+    public String getDireccionFiscal() { return direccionFiscal; }
+    public void setDireccionFiscal(String direccionFiscal) { this.direccionFiscal = direccionFiscal; }
 
-    public double getMonto_total() { return monto_total; }
-    public void setMonto_total(double monto_total) { this.monto_total = monto_total; }
+    public double getMontoTotal() { return montoTotal; }
+    public void setMontoTotal(double montoTotal) { this.montoTotal = montoTotal; }
 
-    public double getMonto_igv() { return monto_igv; }
-    public void setMonto_igv(double monto_igv) { this.monto_igv = monto_igv; }
+    public double getMontoIgv() { return montoIgv; }
+    public void setMontoIgv(double montoIgv) { this.montoIgv = montoIgv; }
 
-    public double getMonto_gravado() { return monto_gravado; }
-    public void setMonto_gravado(double monto_gravado) { this.monto_gravado = monto_gravado; }
+    public double getMontoGravado() { return montoGravado; }
+    public void setMontoGravado(double montoGravado) { this.montoGravado = montoGravado; }
 
-    public String getUrl_xml() { return url_xml; }
-    public void setUrl_xml(String url_xml) { this.url_xml = url_xml; }
+    public EstadoSunat getEstadoSunat() { return estadoSunat; }
+    public void setEstadoSunat(EstadoSunat estadoSunat) { this.estadoSunat = estadoSunat; }
 
-    public String getUrl_pdf() { return url_pdf; }
-    public void setUrl_pdf(String url_pdf) { this.url_pdf = url_pdf; }
+    public String getUrlXml() { return urlXml; }
+    public void setUrlXml(String urlXml) { this.urlXml = urlXml; }
 
-    public Date getFec_emision() { return fec_emision; }
-    public void setFec_emision(Date fec_emision) { this.fec_emision = fec_emision; }
+    public String getUrlPdf() { return urlPdf; }
+    public void setUrlPdf(String urlPdf) { this.urlPdf = urlPdf; }
 
-    public TipoDocIdentidad getTipoDocIdentidad() {
-        return tipoDocIdentidad;
-    }
-
-    public void setTipoDocIdentidad(TipoDocIdentidad tipoDocIdentidad) {
-        this.tipoDocIdentidad = tipoDocIdentidad;
-    }
+    public Date getFecEmision() { return fecEmision; }
+    public void setFecEmision(Date fecEmision) { this.fecEmision = fecEmision; }
 }
